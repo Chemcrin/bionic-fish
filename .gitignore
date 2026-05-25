@@ -1,0 +1,103 @@
+# ===== 环境变量 & 密钥文件 =====
+.env
+.env.*
+*.env
+env.*
+env/
+secrets.*
+*.secret
+secret.*
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.token
+credentials.*
+*_credentials*
+*_secret*
+api_key*
+*api_key*
+apikey*
+*apikey*
+key.json
+service-account.json
+
+# ===== 密码 & Token 文件 =====
+*.password
+password*
+token.*
+*token*
+
+# ===== IDE & 编辑器 =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# ===== 嵌入式 & STM32 =====
+*.o
+*.obj
+*.elf
+*.bin
+*.hex
+*.lst
+*.map
+*.out
+*.d
+*.dep
+Debug/
+Release/
+build/
+*.uvguix.*
+*.uvopt
+*.scvd
+JLinkLog.txt
+
+# ===== CAD & 3D 打印 =====
+*.stl.bak
+*.step.bak
+
+# ===== 日志 & 临时文件 =====
+*.log
+logs/
+temp/
+tmp/
+*.tmp
+*.bak
+*.backup
+*.cache
+
+# ===== 依赖 & 包 =====
+node_modules/
+vendor/
+
+# ===== 虚拟环境 =====
+venv/
+.venv/
+.conda/
+
+# ===== 固件/云配置 =====
+*.config.yaml
+*.config.yml
+*.config.json
+*config*secret*
