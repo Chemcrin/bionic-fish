@@ -2,6 +2,7 @@
 
 > 自动维护，每天由星尘光检查项目更新情况并记录。
 > 若某天漏检，次日会自动补写遗漏的更新内容。
+> 项目开源地址：[Chemcrin/bionic-fish: CTGU 天问 自然与设计 仿生鱼设计与构想](https://github.com/Chemcrin/bionic-fish)
 
 ---
 
