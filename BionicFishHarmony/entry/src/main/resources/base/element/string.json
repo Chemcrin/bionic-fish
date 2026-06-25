@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "仿生鱼控制台"
+    },
+    {
+      "name": "module_desc",
+      "value": "仿生鱼 HarmonyOS 上位机"
+    },
+    {
+      "name": "entry_desc",
+      "value": "仿生鱼实时控制入口"
+    },
+    {
+      "name": "internet_permission_reason",
+      "value": "连接 ESP32-S3 WebSocket 网关并收发控制数据"
+    }
+  ]
+}

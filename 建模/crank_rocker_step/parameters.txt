@@ -1,0 +1,9 @@
+Bionic fish crank-rocker mechanism
+Units: mm
+Fixed axis distance O1-O2: 44.0
+Crank radius O1-A: 10.0
+Connecting rod A-B: 35.0
+Rocker length O2-B: 26.0
+Assembly crank angle: 135.0 deg
+Computed rocker angle in exported assembly: 74.59 deg
+Pin holes: 3.2 dia, tail shaft clearance: 5.3 dia
