@@ -1,0 +1,10 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "Main HAP module for the bionic fish HarmonyOS controller.",
+  "main": "",
+  "author": "Bionic Fish Team",
+  "license": "MIT",
+  "dependencies": {}
+}

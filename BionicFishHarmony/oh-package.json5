@@ -1,0 +1,11 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "bionic-fish-harmony",
+  "version": "1.0.0",
+  "description": "HarmonyOS upper-computer controller for the bionic fish project.",
+  "main": "",
+  "author": "Bionic Fish Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
