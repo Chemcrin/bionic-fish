@@ -1,0 +1,97 @@
+ORCA V2 GEOMETRY VALIDATION
+===========================
+Revision: reference-driven compact underwater thruster
+Nominal X length: 420.000 mm
+Body maximum diameter: 180.000 mm
+Wall: 1.500 mm
+Fit radial clearance: 0.300 mm (dimension tolerance +/-0.100 mm)
+Assembly holes: 3.400 mm
+
+joint120_interface_x120: actual mesh locating-lip gap 0.291-0.315 mm (female/male section vertices 12/12)
+joint120_lip_tip_x128: actual mesh locating-lip gap 0.291-0.315 mm (female/male section vertices 24/12)
+joint300_interface_x300: actual mesh locating-lip gap 0.291-0.308 mm (female/male section vertices 12/12)
+joint300_lip_tip_x308: actual mesh locating-lip gap 0.253-0.316 mm (female/male section vertices 24/12)
+
+Head_nose_cap: axial cap wall 1.500-1.500 mm
+Tail_stern_cap: axial cap wall 1.500-1.500 mm
+
+Joint120_Male_Collar: sampled joint wall 1.560-1.583 mm
+Joint120_Female_Socket: sampled joint wall 2.328-2.400 mm
+Joint300_Male_Collar: sampled joint wall 1.589-1.605 mm
+Joint300_Female_Socket: sampled joint wall 1.673-1.719 mm
+
+joint120: locating-pin axis delta Y=0.000 mm, Z=0.000 mm
+joint300: locating-pin axis delta Y=0.000 mm, Z=0.000 mm
+
+Head_Shell_1p5mm: V=146, T=288, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=81696.872 mm^3
+Joint120_Male_Collar: V=72, T=144, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=9673.419 mm^3
+Joint120_Head_Dowel_Port: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint120_Head_Port_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=311.200 mm^3
+Joint120_Head_Port_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=311.200 mm^3
+Joint120_Head_Dowel_Starboard: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint120_Head_Starboard_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=311.200 mm^3
+Joint120_Head_Starboard_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=311.200 mm^3
+Head_Intake_Panel_Port: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=21168.000 mm^3
+Head_Intake_Panel_Starboard: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=21168.000 mm^3
+Head_Intake_Louver_Port_1: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2494.800 mm^3
+Head_Intake_Louver_Port_2: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2494.800 mm^3
+Head_Intake_Louver_Port_3: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2494.800 mm^3
+Head_Intake_Louver_Starboard_1: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2494.800 mm^3
+Head_Intake_Louver_Starboard_2: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2494.800 mm^3
+Head_Intake_Louver_Starboard_3: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2494.800 mm^3
+Joint120_Head_Seam_Tab_Port: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=499.200 mm^3
+Joint120_Head_Seam_Tab_Starboard: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=499.200 mm^3
+Body_Shell_1p5mm: V=144, T=288, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=139025.996 mm^3
+Joint120_Female_Socket: V=48, T=96, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=12382.112 mm^3
+Joint300_Male_Collar: V=72, T=144, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=5901.871 mm^3
+Joint120_Body_Dowel_Port: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint120_Body_Port_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=329.600 mm^3
+Joint120_Body_Port_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=329.600 mm^3
+Joint120_Body_Dowel_Starboard: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint120_Body_Starboard_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=329.600 mm^3
+Joint120_Body_Starboard_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=329.600 mm^3
+Joint300_Body_Dowel_Port: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint300_Body_Port_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=265.600 mm^3
+Joint300_Body_Port_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=265.600 mm^3
+Joint300_Body_Dowel_Starboard: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint300_Body_Starboard_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=265.600 mm^3
+Joint300_Body_Starboard_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=265.600 mm^3
+Joint300_Body_Seam_Tab_Port: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=499.200 mm^3
+Joint300_Body_Seam_Tab_Starboard: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=499.200 mm^3
+Dorsal_Fin: V=6, T=8, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=14784.000 mm^3
+Pectoral_Port: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=9892.000 mm^3
+Pectoral_Starboard: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=9892.000 mm^3
+Top_Hatch_Port_1: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2142.000 mm^3
+Top_Hatch_Port_2: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=7525.000 mm^3
+Top_Hatch_Port_3: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2310.000 mm^3
+Top_Hatch_Starboard_1: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2142.000 mm^3
+Top_Hatch_Starboard_2: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=7525.000 mm^3
+Top_Hatch_Starboard_3: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=2310.000 mm^3
+Hatch_Latch_Forward_Port: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=420.000 mm^3
+Hatch_Latch_Aft_Port: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=416.000 mm^3
+Hatch_Latch_Forward_Starboard: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=420.000 mm^3
+Hatch_Latch_Aft_Starboard: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=416.000 mm^3
+Tail_Shell_1p5mm: V=146, T=288, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=62791.372 mm^3
+Joint300_Female_Socket: V=48, T=96, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=6104.668 mm^3
+Joint300_Tail_Dowel_Port: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint300_Tail_Port_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=216.000 mm^3
+Joint300_Tail_Port_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=216.000 mm^3
+Joint300_Tail_Dowel_Starboard: V=64, T=128, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=401.358 mm^3
+Joint300_Tail_Starboard_Upper_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=216.000 mm^3
+Joint300_Tail_Starboard_Lower_Rib: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=216.000 mm^3
+Tail_Vent_Panel_Port: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=24500.000 mm^3
+Tail_Vent_Panel_Starboard: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=24500.000 mm^3
+Tail_Vent_Strake_Port_1: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=756.000 mm^3
+Tail_Vent_Strake_Port_2: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=756.000 mm^3
+Tail_Vent_Strake_Port_3: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=756.000 mm^3
+Tail_Vent_Strake_Starboard_1: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=756.000 mm^3
+Tail_Vent_Strake_Starboard_2: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=756.000 mm^3
+Tail_Vent_Strake_Starboard_3: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=756.000 mm^3
+Stern_Nozzle_Backplate: V=8, T=12, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=4500.000 mm^3
+Stern_Nozzle_Port: V=48, T=96, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=1944.000 mm^3
+Stern_Nozzle_Starboard: V=48, T=96, watertight=True, boundary=0, nonmanifold=0, orientation_mismatch=0, volume=1944.000 mm^3
+
+WALL DISTANCE SAMPLES
+Head: inner->outer=1.500000 mm, outer->inner=1.523130 mm
+Body: inner->outer=1.500000 mm, outer->inner=1.517063 mm
+Tail: inner->outer=1.500000 mm, outer->inner=1.525734 mm

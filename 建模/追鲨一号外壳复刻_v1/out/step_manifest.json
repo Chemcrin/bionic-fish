@@ -1,0 +1,32 @@
+{
+  "full": {
+    "file": "zhuisha_no1_v1.step",
+    "vertices": 110986,
+    "triangles": 90068,
+    "bytes": 40291088
+  },
+  "assembly_reference": {
+    "file": "Zhuisha_No1_Assembly.step",
+    "vertices": 110986,
+    "triangles": 90068,
+    "bytes": 40291118
+  },
+  "head": {
+    "file": "head_shell.step",
+    "vertices": 12012,
+    "triangles": 22518,
+    "bytes": 8667355
+  },
+  "body": {
+    "file": "body_shell.step",
+    "vertices": 23585,
+    "triangles": 44498,
+    "bytes": 17412326
+  },
+  "tail": {
+    "file": "tail_shell.step",
+    "vertices": 12413,
+    "triangles": 23326,
+    "bytes": 8980483
+  }
+}
