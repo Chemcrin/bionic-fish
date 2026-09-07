@@ -1,0 +1,10 @@
+build-host/
+build/
+Debug/
+Release/
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.d

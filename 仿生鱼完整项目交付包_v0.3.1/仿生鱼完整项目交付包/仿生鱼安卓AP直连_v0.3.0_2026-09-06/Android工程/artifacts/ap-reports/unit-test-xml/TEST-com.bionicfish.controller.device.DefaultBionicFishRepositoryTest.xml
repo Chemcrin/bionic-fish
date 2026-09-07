@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-09-06T09:44:03.549Z" hostname="HIW" time="0.49">
+  <properties/>
+  <testcase name="failed safety write cannot deadlock handshake on a new session" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.308"/>
+  <testcase name="handshake still requires status in addition to acknowledgement" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.009"/>
+  <testcase name="unknown frame does not refresh supported protocol watchdog" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.013"/>
+  <testcase name="reverse stays blocked until explicitly confirmed in settings" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.017"/>
+  <testcase name="AP TCP failure before connection does not falsely report a handshake failure" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.013"/>
+  <testcase name="mock scan handshake control telemetry and safe stop share one protocol path" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.017"/>
+  <testcase name="AP direct connects without scanning and saves route without replacing LAN settings" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.01"/>
+  <testcase name="AP reconnect keeps Wi-Fi-only endpoint and re-handshakes at safe stop" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.011"/>
+  <testcase name="AP direct uses edited preset and never silently connects a remembered device" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.011"/>
+  <testcase name="connection loss drops queued and periodic movement before transport write" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.013"/>
+  <testcase name="control requested during disconnect cannot run after safety stop" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <testcase name="AP TCP connection with only ACK is not declared ready or remembered" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="safety stop bypasses queued controls and cuts off every older request" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.011"/>
+  <testcase name="explicit command accepts duplicate acknowledgement" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="explicit command ACK timeout reports loss and starts safety policy" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.008"/>
+  <testcase name="scan is rejected while a session is active" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="manual connect cancels stale reconnect intent without tearing down new session" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.01"/>
+  <testcase name="connecting another device urgently stops old fish before teardown" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.009"/>
+  <testcase name="same sequence error fails explicit command" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

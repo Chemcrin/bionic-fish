@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="com.bionicfish.controller.ui.ApDirectUiTest" tests="20" failures="0" errors="0" skipped="0" time="49.396" timestamp="2026-09-06T09:45:07" hostname="localhost">
+  <properties>
+    <property name="device" value="BionicFishApi35(AVD) - 15" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="renderApDirectDevicePageAndLargeTextToPng" classname="com.bionicfish.controller.ui.ApDirectUiTest" time="3.342" />
+  <testcase name="apPreset_isNotRepeatedInScannedDeviceList" classname="com.bionicfish.controller.ui.ApDirectUiTest" time="1.594" />
+  <testcase name="initialPage_connectsApWithoutScanning" classname="com.bionicfish.controller.ui.ApDirectUiTest" time="2.477" />
+  <testcase name="settings_showsIndependentApDefaultsAndEditsAllThreeParameters" classname="com.bionicfish.controller.ui.ApDirectUiTest" time="3.711" />
+  <testcase name="twoHundredPercentText_keepsApActionsAndConnectedControlReachable" classname="com.bionicfish.controller.ui.ApDirectUiTest" time="9.625" />
+  <testcase name="wifiSettingsButton_onlyInvokesSystemSettingsAction" classname="com.bionicfish.controller.ui.ApDirectUiTest" time="2.16" />
+  <testcase name="activeSession_disablesNewApConnectionAndNetworkSwitch" classname="com.bionicfish.controller.ui.ApDirectUiTest" time="1.872" />
+  <testcase name="bluetoothEntries_areHiddenWithoutBluetoothHardware" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.361" />
+  <testcase name="udpSettings_showConfigurableDiscoveryParameters" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.386" />
+  <testcase name="reverseControl_isDisabledWhenFirmwareDoesNotAllowIt" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.341" />
+  <testcase name="twoHundredPercentFontScale_keepsPrimaryControlsReachable" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.255" />
+  <testcase name="servoSlider_sendsOnlyOneFinalCommandAfterDrag" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.423" />
+  <testcase name="staleTelemetry_isClearlyMarkedAndNullValuesAreUnavailable" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.235" />
+  <testcase name="longErrorBannerAndLargeText_keepSafetyStopClickable" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="2.213" />
+  <testcase name="leavingControlView_requestsSafeStop" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="2.108" />
+  <testcase name="emergencyStop_isProminentLargeAndImmediate" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="2.231" />
+  <testcase name="bluetoothSettings_showFieldsForSelectedBluetoothTypeOnly" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.307" />
+  <testcase name="emergencyStop_remainsVisibleAfterScrollingToTargetSummary" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="1.31" />
+  <testcase name="navigation_reachesAllFourPrimaryViews" classname="com.bionicfish.controller.ui.BionicFishAppTest" time="4.888" />
+  <testcase name="renderOptimizedControlScreenToPng" classname="com.bionicfish.controller.ui.ControlScreenRenderTest" time="1.929" />
+</testsuite>
