@@ -101,3 +101,6 @@ venv/
 *.config.yml
 *.config.json
 *config*secret*
+
+# ===== SolidWorks 临时锁文件 =====
+~$*
