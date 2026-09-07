@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-labelledby="title desc">
+  <title id="title">天和星 STM32 开发板 Logo 示意图</title>
+  <desc id="desc">由天穹轨道、和谐波浪电路和金色星体构成的科技品牌标志</desc>
+  <rect width="1600" height="1600" fill="#F7F9FC"/>
+
+  <!-- Mark: a sky orbit enclosing an electronic wave and a star. -->
+  <g transform="translate(800 610)">
+    <circle r="380" fill="#FFFFFF" stroke="#103D73" stroke-width="34"/>
+    <path d="M-308 110 C-210 -5 -110 148 0 72 C110 -5 197 -50 307 -158" fill="none" stroke="#13A89E" stroke-width="58" stroke-linecap="round"/>
+    <path d="M-318 202 C-180 102 -110 252 5 186 C126 117 213 93 316 9" fill="none" stroke="#103D73" stroke-width="34" stroke-linecap="round"/>
+    <circle cx="-318" cy="202" r="29" fill="#13A89E"/>
+    <circle cx="316" cy="9" r="22" fill="#13A89E"/>
+    <circle cx="307" cy="-158" r="22" fill="#13A89E"/>
+    <path d="M-260 -135 C-158 -278 60 -350 239 -238" fill="none" stroke="#8ECDE0" stroke-width="22" stroke-linecap="round"/>
+    <circle cx="-260" cy="-135" r="18" fill="#8ECDE0"/>
+    <g transform="translate(84 -118)">
+      <path d="M0 -164 L37 -44 L163 0 L37 43 L0 164 L-37 43 L-163 0 L-37 -44 Z" fill="#F6B82D"/>
+      <circle r="21" fill="#FFF5D8"/>
+    </g>
+  </g>
+
+  <g text-anchor="middle" fill="#103D73">
+    <text x="800" y="1155" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="184" font-weight="700" letter-spacing="18">天和星</text>
+    <text x="800" y="1262" font-family="Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="13" fill="#13A89E">TIAN HE XING</text>
+  </g>
+  <path d="M535 1334 H1065" stroke="#D6DEE9" stroke-width="4"/>
+  <text x="800" y="1416" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="34" font-weight="500" letter-spacing="5" fill="#49677F">STM32 DEVELOPMENT BOARD</text>
+</svg>
