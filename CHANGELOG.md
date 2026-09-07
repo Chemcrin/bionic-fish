@@ -140,6 +140,13 @@ Python 参数化生成脚本：`crank_rocker_cadquery.py`
 - 天河星 logo 概念设计：`tianhexing-logo-concept.svg / .png`
 - 9/2：解析 epro2 工程（`_epro2_extract/`、`_parsed_components.txt`、`_records.txt`），完成 **引脚分配文档** `STM32拓展板_2026-08-26_引脚分配.md`
 
+### 五、交付包与展示准备（9/2-9/7）📦
+
+- **仿生鱼完整项目交付包 v0.2.0**（9/7）：含 `交付说明.md`、**Android 上位机工程**（Kotlin，基于 TCP/UDP 传输 + ASCII 协议，含 AP 直连指引、UI 设计与交互说明、通信协议、验收检查清单）、控制端与协议等完整交付内容
+- 讲演实物图归档（`讲演实物图.zip`）
+- 根目录补充快拆架模型；`.gitignore` 增加 SolidWorks `~$` 锁文件规则
+- ✅ 9/7 完成全部变更分批提交（共 8 个 commit）并推送 GitHub
+
 ### 待办 📋
 
 - 追鲨一号外壳 STEP 转入 SolidWorks 细化，切片打印验证
