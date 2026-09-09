@@ -64,6 +64,7 @@ enum class Turn(val wireValue: String) {
     }
 }
 
+/** 旧 CMD 兼容字段；当前 UI 固定发送 60，不用于设置固定低速固件的换相节拍。 */
 enum class StepSpeed(val rpm: Int) {
     SLOW(60),
     FAST(100);
@@ -77,8 +78,8 @@ sealed interface ProtocolFrame {
     data class Status(
         val sequence: Int,
         val linkAlive: Boolean,
-        val stepTargetRpm: Int,
-        val stepEstimatedRpm: Int,
+        val stepTargetRpm: Int?,
+        val stepEstimatedRpm: Int?,
         /** 当前板卡无编码器，固件固定发送 NA；保留数值分支供未来兼容。 */
         val stepActualRpm: Double?,
         val servoDegrees: Int,
@@ -86,6 +87,8 @@ sealed interface ProtocolFrame {
         val pitchDegrees: Double?,
         val yawDegrees: Double?,
         val faultBits: Long,
+        /** 驱动输出命令状态，绝非实际转动；旧状态帧只能从有效目标值推断。 */
+        val stepCommandedOn: Boolean? = stepTargetRpm?.let { it > 0 },
     ) : ProtocolFrame
 
     data class Acknowledgement(

@@ -16,7 +16,6 @@
 typedef struct {
     Ssd1306 *display;
     uint32_t next_render_ms;
-    bool display_available;
 } OledUi;
 
 void OledUi_Init(OledUi *ui, Ssd1306 *display, uint32_t now_ms);

@@ -14,8 +14,8 @@ data class FaultDescription(
 data class TelemetrySnapshot(
     val sequence: Int,
     val stm32LinkAlive: Boolean,
-    val stepTargetRpm: Int,
-    val stepEstimatedRpm: Int,
+    val stepTargetRpm: Int?,
+    val stepEstimatedRpm: Int?,
     val stepActualRpm: Double?,
     val servoDegrees: Int,
     val rollDegrees: Double?,
@@ -24,6 +24,7 @@ data class TelemetrySnapshot(
     val faultBits: Long,
     val activeFaults: List<FaultDescription>,
     val receivedAtEpochMillis: Long,
+    val stepCommandedOn: Boolean? = stepTargetRpm?.let { it > 0 },
 )
 
 data class TelemetryState(
@@ -40,7 +41,7 @@ object Stm32Faults {
         FaultDescription(1, 2L, "ESP_RX_LOST", "ESP/USART2 接收数据丢失"),
         FaultDescription(2, 4L, "IMU_DATA_TIMEOUT", "JY61P 数据过期或不可用"),
         FaultDescription(3, 8L, "IMU_I2C_RECOVERY_FAILED", "JY61P I²C 总线恢复失败"),
-        FaultDescription(4, 16L, "STEPPER_HW_UNCONFIRMED", "步进电机硬件参数门禁未解除"),
+        FaultDescription(4, 16L, "STEPPER_DISABLED", "步进驱动未启用"),
         FaultDescription(5, 32L, "UART_TX_DROPPED", "串口发送队列发生丢弃"),
         // bit6 = 64 为固件保留位，不映射成旧 N20 故障。
         FaultDescription(7, 128L, "OLED_I2C", "OLED 软件 I²C 运行异常"),
@@ -77,4 +78,5 @@ fun ProtocolFrame.Status.toTelemetry(receivedAtEpochMillis: Long): TelemetrySnap
     faultBits = faultBits,
     activeFaults = Stm32Faults.decode(faultBits),
     receivedAtEpochMillis = receivedAtEpochMillis,
+    stepCommandedOn = stepCommandedOn,
 )

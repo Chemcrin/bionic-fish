@@ -20,26 +20,10 @@ static const StepperPhase kBipolarFullStepTable[4] = {
     {BSP_BRIDGE_FORWARD, BSP_BRIDGE_REVERSE}
 };
 
-static bool StepperParametersReady(void)
-{
-    return (CFG_STEPPER_DRIVER_ENABLED != 0U) &&
-           (CFG_STEPPER_PARAMETERS_CONFIRMED != 0U) &&
-           (CFG_STEPPER_COMMUTATIONS_PER_OUTPUT_REV != 0UL) &&
-           (CFG_STEPPER_WINDING_PWM_PERCENT != 0U);
-}
-
-static uint32_t StepPeriodUs(uint16_t rpm)
-{
-    uint32_t denominator = (uint32_t)rpm * CFG_STEPPER_COMMUTATIONS_PER_OUTPUT_REV;
-    return (denominator == 0UL) ? 0UL : (60000000UL / denominator);
-}
-
 static void StopStepper(MotorController *motor)
 {
     motor->step_running = false;
     motor->step_reverse = false;
-    motor->step_target_rpm = 0U;
-    motor->step_commanded_rpm = 0U;
     /* A/B 两相同时释放，避免停止后持续发热。是否需要保持力必须另行评估。 */
     BSP_BridgeA_Coast();
     BSP_BridgeB_Coast();
@@ -65,7 +49,7 @@ void Motor_Init(MotorController *motor)
 
 void Motor_ApplyCommand(MotorController *motor, const BfRemoteCommand *command, uint32_t now_us)
 {
-    uint32_t period_us;
+    bool reverse;
 
     if ((motor == 0) || (command == 0)) {
         return;
@@ -74,22 +58,19 @@ void Motor_ApplyCommand(MotorController *motor, const BfRemoteCommand *command, 
         StopStepper(motor);
         return;
     }
-    if (!StepperParametersReady()) {
-        /* 仲裁层正常会先拒绝；这里再次防御，防止内部误调用让未知线圈参数上电。 */
+    if ((CFG_STEPPER_DRIVER_ENABLED == 0U) ||
+        ((command->move == BF_MOVE_REVERSE) && (CFG_STEPPER_UNIDIRECTIONAL != 0U))) {
+        /* 内部调用也遵守显式禁用和单向配置。 */
         StopStepper(motor);
         return;
     }
-
-    period_us = StepPeriodUs(command->step_rpm);
-    if (period_us == 0UL) {
-        StopStepper(motor);
-        return;
+    reverse = (command->move == BF_MOVE_REVERSE);
+    /* 新 seq 只用于协议保活；同一运动目标以及单独的舵角变化不得提前换相。 */
+    if (!motor->step_running || (motor->step_reverse != reverse)) {
+        motor->next_commutation_us = now_us;
     }
     motor->step_running = true;
-    motor->step_reverse = (command->move == BF_MOVE_REVERSE);
-    motor->step_target_rpm = command->step_rpm;
-    motor->step_commanded_rpm = command->step_rpm;
-    motor->next_commutation_us = now_us;
+    motor->step_reverse = reverse;
 }
 
 void Motor_ApplyFailsafe(MotorController *motor)
@@ -97,23 +78,19 @@ void Motor_ApplyFailsafe(MotorController *motor)
     if (motor == 0) {
         return;
     }
-#if (CFG_STEPPER_STOP_ON_LINK_TIMEOUT != 0U)
     StopStepper(motor);
-#endif
 }
 
 void Motor_Service(MotorController *motor, uint32_t now_us)
 {
-    uint32_t period_us;
     bool reverse_phase_order;
 
-    if ((motor == 0) || !motor->step_running || !StepperParametersReady()) {
+    if ((motor == 0) || !motor->step_running || (CFG_STEPPER_DRIVER_ENABLED == 0U)) {
         return;
     }
 
-    period_us = StepPeriodUs(motor->step_target_rpm);
     reverse_phase_order = motor->step_reverse ^ (CFG_STEPPER_PHASE_REVERSED != 0U);
-    if ((period_us != 0UL) && ((int32_t)(now_us - motor->next_commutation_us) >= 0)) {
+    if ((int32_t)(now_us - motor->next_commutation_us) >= 0) {
         ApplyStepperPhase(motor);
         if (reverse_phase_order) {
             motor->step_phase = (uint8_t)((motor->step_phase - 1U) & 0x03U);
@@ -122,6 +99,6 @@ void Motor_Service(MotorController *motor, uint32_t now_us)
         }
         /* 主循环若偶发迟到，只执行一次具有完整驻留时间的换相。连续补四拍会在
          * 同一次循环内瞬间跨相，线圈来不及建立电流且更容易失步。 */
-        motor->next_commutation_us = now_us + period_us;
+        motor->next_commutation_us = now_us + CFG_STEPPER_COMMUTATION_PERIOD_US;
     }
 }

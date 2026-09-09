@@ -61,6 +61,7 @@ class AsciiProtocolTest {
 
         assertEquals(12, status.sequence)
         assertEquals(60, status.stepTargetRpm)
+        assertEquals(true, status.stepCommandedOn)
         assertNull(status.stepActualRpm)
         assertNull(status.rollDegrees)
         assertEquals(-2.4, status.pitchDegrees!!, 0.0001)
@@ -75,6 +76,47 @@ class AsciiProtocolTest {
         )
 
         assertEquals(ProtocolParseError.INVALID_VALUE, (result as DecodeResult.Malformed).reason)
+    }
+
+    @Test
+    fun `fixed low speed status uses commanded output without inventing RPM`() {
+        listOf(0, 1).forEach { on ->
+            val result = AsciiProtocol.decodePayload(
+                "STA,seq=2,link=1,step_rpm=NA,step_est=NA,step_actual=NA,step_on=$on," +
+                    "servo=-10,roll=NA,pitch=NA,yaw=NA,err=0",
+            )
+            val status = (result as DecodeResult.Frame).value as ProtocolFrame.Status
+            assertNull(status.stepTargetRpm)
+            assertNull(status.stepEstimatedRpm)
+            assertNull(status.stepActualRpm)
+            assertEquals(on == 1, status.stepCommandedOn)
+        }
+    }
+
+    @Test
+    fun `legacy output inference needs a known target and explicit output takes precedence`() {
+        listOf("0" to false, "60" to true, "100" to true, "NA" to null).forEach { (target, on) ->
+            val raw = "STA,seq=3,link=1,step_rpm=$target,step_est=60,step_actual=NA," +
+                "servo=0,roll=0,pitch=0,yaw=0,err=0"
+            val status = (AsciiProtocol.decodePayload(raw) as DecodeResult.Frame).value as ProtocolFrame.Status
+            assertEquals(on, status.stepCommandedOn)
+        }
+        val explicitStop = AsciiProtocol.decodePayload(
+            "STA,seq=4,link=1,step_rpm=100,step_est=100,step_actual=NA,step_on=0," +
+                "servo=0,roll=0,pitch=0,yaw=0,err=0",
+        )
+        assertEquals(false, ((explicitStop as DecodeResult.Frame).value as ProtocolFrame.Status).stepCommandedOn)
+    }
+
+    @Test
+    fun `commanded output flag accepts only zero or one`() {
+        listOf("2", "-1", "true", "NA").forEach { bad ->
+            val result = AsciiProtocol.decodePayload(
+                "STA,seq=5,link=1,step_rpm=NA,step_est=NA,step_actual=NA,step_on=$bad," +
+                    "servo=0,roll=0,pitch=0,yaw=0,err=0",
+            )
+            assertEquals(ProtocolParseError.INVALID_VALUE, (result as DecodeResult.Malformed).reason)
+        }
     }
 
     @Test

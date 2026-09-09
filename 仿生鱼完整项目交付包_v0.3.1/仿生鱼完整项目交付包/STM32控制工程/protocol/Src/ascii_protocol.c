@@ -135,7 +135,8 @@ static ProtocolEvent ParsePayload(ProtocolParser *parser)
         }
 
         equals = strchr(token, '=');
-        if ((equals == 0) || (equals == token) || (equals[1] == '\0')) {
+        if ((equals == 0) || (equals == token) || (equals[1] == '\0') ||
+            (strchr(equals + 1, '=') != 0)) {
             RETURN_PAYLOAD_ERROR(PROTO_ERR_FIELD);
         }
         *equals = '\0';
@@ -322,7 +323,7 @@ const char *Protocol_ErrorName(ProtocolError error)
     case PROTO_ERR_SEQ_OLD: return "E_SEQ_OLD";
     case PROTO_ERR_SEQ_AMBIGUOUS: return "E_SEQ_AMBIGUOUS";
     case PROTO_ERR_STEP_REVERSE_UNSUPPORTED: return "E_STEP_REVERSE_UNSUPPORTED";
-    case PROTO_ERR_STEPPER_HW_UNCONFIRMED: return "E_STEPPER_HW_UNCONFIRMED";
+    case PROTO_ERR_STEPPER_DISABLED: return "E_STEPPER_DISABLED";
     case PROTO_ERR_CONFIGURATION: return "E_CONFIGURATION";
     case PROTO_ERR_RX_OVERFLOW: return "E_RX_OVERFLOW";
     case PROTO_ERR_NONE:
@@ -386,12 +387,11 @@ size_t Protocol_EncodeStatus(char *out, size_t capacity, const BfSystemSnapshot 
         (void)strcpy(yaw, "NA");
     }
     written = snprintf(out, capacity,
-                       "<STA,seq=%u,link=%u,step_rpm=%u,step_est=%u,step_actual=NA,servo=%d,"
+                       "<STA,seq=%u,link=%u,step_rpm=NA,step_est=NA,step_actual=NA,step_on=%u,servo=%d,"
                        "roll=%s,pitch=%s,yaw=%s,err=%lu>\n",
                        (unsigned int)snapshot->last_sequence,
                        snapshot->command_link_alive ? 1U : 0U,
-                       (unsigned int)snapshot->step_target_rpm,
-                       (unsigned int)snapshot->step_commanded_rpm,
+                       snapshot->step_running ? 1U : 0U,
                        (int)snapshot->servo_deg, roll, pitch, yaw,
                        (unsigned long)snapshot->active_faults);
     return ((written < 0) || ((size_t)written >= capacity)) ? 0U : (size_t)written;

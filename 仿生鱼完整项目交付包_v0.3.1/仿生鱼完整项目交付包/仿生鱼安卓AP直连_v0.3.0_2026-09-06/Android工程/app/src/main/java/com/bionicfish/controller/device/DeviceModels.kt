@@ -112,7 +112,6 @@ data class RepositoryState(
     val sentFrameCount: Long = 0L,
     val receivedFrameCount: Long = 0L,
     val reverseCommandAllowed: Boolean = false,
-    val stepperParametersConfirmed: Boolean = false,
     /** 本地安全停止意图代数；意图建立即递增，供 UI 清除残留 FORWARD 草稿。 */
     val safetyStopGeneration: Long = 0L,
 )

@@ -1,123 +1,82 @@
-# 仿生鱼 STM32F103C8T6 控制工程
+# STM32 仿生鱼控制工程
 
-本工程为 STM32F103C8T6 的 HAL/CubeMX 风格控制基线，按 `bsp`、`drivers`、`app`、`protocol`、`ui`、`control` 分层。它的目标是让样机能被逐项验证，而不是用未经确认的硬件参数制造“已经可用”的假象。
+当前交付：STM32F103C8T6 + ESP-01S AT/TCP + Android V1 ASCII 控制器。两相双极步进电机由 TB6612 的 A/B 两桥驱动；N20 不受支持。HarmonyOS、ESP32 WebSocket、自定义 ESP 透明桥均不在本轮链路中。
 
-> 重要硬件调整：TB6612 的 A、B 两个 H 桥现在分别驱动一颗两相双极步进电机的线圈 A、线圈 B：A01/A02（M1 端）只接线圈 A，B01/B02（M2 端）只接线圈 B。原 N20 电机和抽吸机构必须从 M2 端物理断开；本工程不再有 N20 控制、抽吸逻辑或 N20 状态字段。
+## 硬件和软件边界
 
-> 重要安全门禁：默认 `CFG_STEPPER_PARAMETERS_CONFIRMED=0`、`CFG_STEPPER_COMMUTATIONS_PER_OUTPUT_REV=0`、`CFG_STEPPER_WINDING_PWM_PERCENT=0`。因此即便收到 60/100 RPM 命令，固件也会保持两桥 coast（无励磁）并报告步进硬件未确认。只有完成线圈、电流、步距角、减速比、每输出转换相数、安全 PWM 和 `STBY` 的实测确认后，才能解除该门禁。
+| 功能 | 配置 |
+| --- | --- |
+| MCU / 时钟 | STM32F103C8T6，64 KiB Flash、20 KiB RAM；HSE 8 MHz、SYSCLK 72 MHz，晶振需与实板一致 |
+| 推进电机 | TIM2 CH1/2，20 kHz、10% PWM；A/B 两桥各接一组线圈，固定每 50 ms 四拍换相，无位置/RPM控制 |
+| 舵机 | PA6 / TIM3 CH1，50 Hz，1000–2000 µs，默认中位 1500 µs；相对角 ±30° |
+| ESP 通信 | PA2 TX → ESP RX，PA3 RX ← ESP TX；115200 / 8N1，无 RTS/CTS |
+| 调试 | PB10 USART3 TX → CH340 RX；仅输出诊断及 V1 帧，不接收控制命令 |
+| 姿态 | JY61P，PB6/PB7 软件 I²C；地址 0x50、起始寄存器 0x3D 为待实板核实的配置 |
+| 屏幕 | SSD1306 128×64，PB8/PB9；尝试 0x3C/0x3D；保留原单页 ASCII 布局 |
+| 未使用接口 | KEY1/2/3、PA7 第二舵机、PA9/PA10 USART1 未启用；不据此判断物理悬空 |
 
-## 功能范围
+所有可调参数在 `app/Inc/app_config.h`。默认允许前进并持续固定低速换相，STOP 或失联时两桥 coast。已删除每转步数、RPM 换算和硬件参数确认门禁；只需调整线圈 PWM 和换相周期。`CFG_STEPPER_DRIVER_ENABLED=0` 可显式禁用推进。10% 为本轮低功率试运行初值，实际转动和温升仍需上板观察。
 
-- TB6612 A/B 两桥以四拍全步换相驱动一颗两相双极步进电机；命令档位为 60 RPM 和 100 RPM。当前默认只允许 `move=F` 单方向，`move=R` 会明确拒绝；若以后经硬件确认允许反向，必须显式修改配置并复测相序。
-- PA6 输出 IP65 舵机脉冲，软件限制相对中位的 -30°、0°、+30°范围。真实中心脉宽、机械限位和 3.3 V 信号兼容性仍待实测。
-- PB8/PB9 为 SSD1306 的独立软件 I²C；PB6/PB7 为 JY61P 的独立软件 I²C。两条总线均使用 GPIO 开漏和超时/恢复逻辑。
-- ESP-01S 经 USART2（PA2/PA3）接收 ASCII 控制帧；CH340N 经 USART3（PB10/PB11）以 115200-8-N-1 输出调试/状态帧。
-- OLED 以固定内存、分块传输和服务式刷新显示步进命令、舵机、姿态、链路与故障。它是对 `oled-ui-astra` 信息层级/非阻塞思路的兼容性重构，不是上游代码的原样移植。
-- 未接入编码器、霍尔或外部测速时，`step_rpm`/`step_est` 只能是目标值或换相节拍估算；状态帧固定报告 `step_actual=NA`，不能称为真实机械转速。
+没有转速编码器或舵角反馈。`step_rpm`、`step_est`、`step_actual` 均为 `NA`；`step_on=0/1` 表示驱动命令为停止/运行，不证明电机实际转动。JY61P 无效/过期数据上报 `NA`；相邻样本变化筛选默认 90°/50ms，为宽松可配置初值。
 
-## 工程目录与关键文件
+## ESP-01S 固件要求
 
-```text
-bionic-fish-stm32f103c8t6/
-├─ Core/
-│  ├─ Inc/main.h                    # 唯一业务引脚定义
-│  └─ Src/main.c                    # CubeMX 初始化后的主循环入口
-├─ app/
-│  ├─ Inc/app_config.h              # 时钟、时序、门禁和安全策略的唯一配置入口
-│  └─ Src/app.c                     # 主循环服务、失联/溢出安全处理、状态汇总
-├─ bsp/
-│  └─ Src/
-│     ├─ bsp_board.c                # 两桥 coast/换相、舵机、按键、LED
-│     ├─ bsp_time.c                 # 毫秒/微秒时基
-│     └─ bsp_uart.c                 # USART2/USART3 非阻塞收发
-├─ control/
-│  └─ Src/
-│     ├─ control_arbiter.c          # 序号、语义校验、失联会话
-│     ├─ motor_control.c            # 双桥两相全步换相与参数门禁
-│     └─ servo_control.c            # 角度/脉宽双重限幅
-├─ drivers/
-│  └─ Src/
-│     ├─ soft_i2c.c                 # 软件 I²C、ACK 超时、9 脉冲恢复
-│     ├─ jy61p.c                    # JY61P 探测、读取、合理性检查
-│     └─ ssd1306.c                  # 固定缓冲 SSD1306 驱动
-├─ protocol/
-│  └─ Src/
-│     ├─ ring_buffer.c              # 固定大小 UART 环形缓冲
-│     └─ ascii_protocol.c           # CMD/ACK/ERR/STA 编解码
-├─ ui/Src/oled_ui.c                 # 页面状态、脏刷新和分块服务
-├─ tests/host/Src/protocol_host_test.c
-├─ bionic_fish.ioc                  # CubeMX 外设/引脚配置
-├─ CMakeLists.txt                   # 主机协议测试和可选交叉编译
-└─ cmake/                           # Arm GNU Toolchain/链接脚本
-```
+已收到用户提供的 `AT+GMR` 回包：**AT 1.7.4.0，SDK 3.0.5-dev(52383f9)，编译于2020-08-28**，匹配本工程 NONOS 分支，保留现有固件。最初查询启用了 RTS，提供保存修正命令后，用户复查得到 `+UART_CUR:115273,8,1,0,0`，当前串口参数已匹配约 115200、8N1、无流控要求。完整回包与 `UART_DEF` 操作见[硬件说明](硬件引脚与驱动说明.md)。STM32/TCP 实板联调尚待验证，Flash 容量仅在需要重刷时进一步核对。
 
-中断/DMA 回调只能放入/取出固定大小缓冲、置标志和重新挂接接收；协议解析、换相调度、OLED 发送与 I²C 恢复均在主循环执行。工程不使用动态内存，也不允许在中断中调用 `HAL_Delay`。
+`bsp/Src/esp_link.c` 使用普通 AT 收发模式，**不能与裸 UART 透明桥一起使用**。GMR 区分 NONOS AT 1.7.4/1.7.5 与 ESP-AT 2.x 命令差异；现场必须核对实际 GMR 结果、Flash 容量及 AT UART 的 GPIO 映射。
 
-## 编译与 CubeMX 配置
+ESP-01S 常见容量为 1 MB。不能把面向更大 Flash 或不同 AT 引脚的 ESP8266 通用镜像直接视为兼容镜像。可参考官方 [NONOS SDK v3.0.4 的 AT/Nano 发布说明](https://github.com/espressif/ESP8266_NONOS_SDK/releases/tag/v3.0.4)，选择与真实容量和引脚匹配的固件；未在实物上验证前不把镜像标为已验收。
 
-### 主机侧协议检查
+默认参数与 Android AP 预置相同：
 
-主机检查只构建不依赖 HAL 的协议/仲裁逻辑，适合首先验证帧格式、序号和边界条件：
+| 项目 | 默认值 |
+| --- | --- |
+| SSID / 密码 | `BionicFish-AP` / `12345678` |
+| AP / 网关 | `192.168.4.1` |
+| 掩码 | `255.255.255.0` |
+| 传输 | TCP server，端口 `9000`，单控制客户端 |
+
+固件逐命令配置并等待自身响应，核查版本、串口和 AP 地址后创建服务，并完成固定 3 秒 TCP 空闲超时配置；不会用 ATE0 的 OK 代替 CIPSERVER 成功。收到 CONNECT 后记录连接 ID，拒绝额外控制客户端；CLOSED、ESP 重启、接收丢失或发送失败会撤销控制会话并进入失联安全态。
+
+发送先等 CIPSEND 的 `>`，再发送声明的准确字节数，最后等 SEND OK。ACK/ERR 走事件 FIFO，STA 只有一个可替换的最新状态槽。不能确认 ESP 是否仍等待数据时，不把 AT+RST 或 +++ 盲发成载荷：诊断出现 `reset=1` 表示需要实际复位 ESP，观察到 `ready` 后重新初始化。详细兼容条件和异常回归见 `tests/esp_link/README.md`。
+
+## 构建、烧录与验证
+
+唯一固件源列表为 CMake，固定依赖及跨平台用法见 [scripts/BUILDING.md](scripts/BUILDING.md)。Windows 首次构建：
 
 ```powershell
-cmake -S . -B build-host
-cmake --build build-host
-ctest --test-dir build-host --output-on-failure
+python scripts/build.py firmware --bootstrap
+python scripts/build.py host --bootstrap --host-cc C:/path/to/native-gcc.exe
 ```
 
-本次交付已在 2026-09-03 使用主机 C 编译器以 `-Wall -Wextra -Werror` 运行同一测试，结果为 `protocol_host_test: PASS`；全量业务源码也已与 HAL 桩完成零诊断语法/链接检查。该结果不代替 Arm GNU Toolchain 或 CubeIDE 的目标板交叉编译。
+输出 `build-firmware/bionic_fish.elf`、`.bin`、`.map` 和 `build-info.json`。当前没有已提交的 STM32 BIN/ELF/MAP，必须以本次源码构建产物为准。主机编译器用于 host 测试，Arm 编译器用于固件，不能相互替代。
 
-### STM32 交叉编译
+ST-LINK 使用 PA13/PA14 和 GND。烧录脚本与手动步骤见 [scripts/README.md](scripts/README.md)。构建不会自动烧录。CubeMX 必须在独立目录生成后审核合并；不能只核对引脚数值就覆盖受维护的 Core 代码。
 
-完整固件需要 Arm GNU Toolchain 和已安装的 STM32CubeF1 固件包。以下路径必须替换为本机实际路径：
+## 首次连接
 
-```powershell
-cmake -S . -B build-firmware `
-  -DCMAKE_TOOLCHAIN_FILE=cmake/arm-none-eabi-gcc.cmake `
-  -DBIONIC_FISH_BUILD_FIRMWARE=ON `
-  -DSTM32CUBE_F1_PATH=C:/path/to/STM32Cube_FW_F1_Vx.y.z
-cmake --build build-firmware
-```
+1. 完成 USART2 交叉收发、ESP EN/供电、两条 I²C 外部 3.3V 上拉的检查。
+2. 启动后在 USART3 观察 `ESP server=... tcp=... reset=... error=...`。`server=1` 表示已完成服务初始化，`tcp=1` 表示有控制客户端；它们不同于应用 CMD 保活。
+3. 手机连接上述 AP 并保持无互联网 Wi-Fi，Android 设备页点击“AP 直连”。应用将 TCP Socket 绑定到 Wi-Fi，不需要通过关闭所有蜂窝数据解决路由。
+4. 握手发送完整合法的 STOP CMD，收到同序号 ACK 与 `link=1` 的 STA 后才显示已连接。
+5. 点击前进验证固定低速连续转动，再验证停止、舵机、姿态和失联停机。旧命令字段 `step_speed=60/100` 仍可解析，但不再改变换相频率；安卓已取消转速档位选择。
 
-也可用 STM32CubeIDE 打开/生成 `bionic_fish.ioc` 对应工程。重新生成前后必须核对 `main.h`、`gpio.c`、`tim.c`、`usart.c` 和 `app_config.h` 的数值一致；不能只因 CubeMX 没有报冲突就假定电机接法正确。
+## 运行与故障排查
 
-### 烧录
+- `LNK`/`STA.link` 表示有效 CMD/幂等重传保活，不证明对端应用身份。正常保活不得重排电机换相。
+- 1000 ms 无有效命令时停止步进、默认舵机回中、清除序号窗口并主动关闭旧 TCP，释放控制客户端槽位。UART 丢字节、TCP 断开和发送故障更早触发同一套停止处理。
+- OLED 启动不再进行近一秒忙等。未初始化时后台轮流尝试两个地址；整组初始化在步进停止时执行。运行期 I²C 错误使屏幕失效，停止后重新初始化；原数据布局不变。
+- PC13 正常每 500 ms 翻转；OLED 未初始化时每 120 ms 翻转。完整亮灭周期分别约 1 s / 240 ms。`I2CSCAN` 分步报告屏幕总线应答地址；`none` 表示当次扫描未发现应答，不能单凭它断言哪根线错误。
+- OLED `E:` 是低 12 位十六进制；STA `err=` 是十进制故障位图，详见 [通信协议.md](通信协议.md)。
+- AP 能加入但 TCP 失败：先看 `server`、AT 版本/错误及端口。TCP 已连接但 ACK/STA 验证失败：看 `tcp`、USART2 数据、帧尾及发送错误，并确认安装支持 `step_on` 和 RPM 为 `NA` 的新版 APK。
+- `reset=1`：按诊断先解决串口/固件或供电问题，再实际复位 ESP；不能依赖未知发送模式下的“自动逃逸”。
 
-使用 ST-LINK 经 PA13/PA14（SWDIO/SWCLK）和 GND 连接目标板，在 STM32CubeProgrammer 或 STM32CubeIDE 中下载构建得到的 `bionic_fish.elf`/`bionic_fish.bin`。第一次烧录只接 MCU 逻辑电源，不接步进电机电源；下载后先观察 PC13、USART3 和 `STA.err`，确认 `BF_FAULT_STEPPER_HW_UNCONFIRMED`（bit4）存在且两桥未励磁，才进行后续接线检查。
+## 验收边界
 
-| 项目 | 当前配置基线 | 说明 |
-| --- | --- | --- |
-| 时钟 | HSE 8 MHz、PLL ×9、SYSCLK 72 MHz | HSE 标称/起振仍待板卡实测。 |
-| 电机 PWM | TIM2 CH1=PA0、CH2=PA1，20 kHz | A/B 两个通道均属于同一颗步进电机；PWM 不是恒流控制。 |
-| 舵机 PWM | TIM3 CH1=PA6，50 Hz，1/1.5/2 ms 初值 | 脉宽只是不经实测的初始标定值。 |
-| 微秒时基 | TIM4，1 MHz | 供软件 I²C 与换相调度使用。 |
-| 控制链路 | USART2/USART3 115200；帧超时 250 ms，失联超时 1000 ms | 周期和超时均待整机实测。 |
-| 软件 I²C | 5 µs 半周期（名义 100 kHz） | 上拉、线长、地址和时钟拉伸能力待确认。 |
-| 步进门禁 | `PARAMETERS_CONFIRMED=0`、换相数/PWM=0 | 默认禁止两桥输出，避免未知线圈通电。 |
+详见 [验收检查清单.md](验收检查清单.md)。本轮固定低速版本通过17/17 CTest及真实Arm交叉构建；BIN为24,604字节，Flash37.54%，RAM含堆栈预留7,816/20,480字节（38.16%）。产物哈希和工具版本见 `build-firmware/build-info.json`。
 
-## 首次上电顺序
+BIN SHA-256：`fca1a613510e9c4c26fbbda0048f04e6d488b8fb2967f8891cd74e6d925bdafb`。详细记录在 `build-firmware/`，链接告警及本机工具来源边界见构建说明。业务代码使用固定缓冲，无显式动态分配；不对 newlib 内部路径作未经实测的零堆承诺。
 
-1. 先将原 N20 电机从 M2/B01/B02 端物理断开，并用万用表确认 M1 端与 M2 端分别只连到同一颗步进电机的两组独立线圈。
-2. 仅接 MCU、SWD 和 3.3 V 逻辑电源，确认 HSE、SysTick、PC13、下载与复位行为。
-3. 测 PA0、PA1、PB12~PB15 的空载波形和安全 coast 初始态；在 `STBY` 未确认前不得接入电机电源。
-4. 接 OLED，确认其 VCC、SCL、SDA 上拉全部是 3.3 V，再确认地址和刷新。
-5. 用 CH340N 验证 USART3，再验证 ESP-01S 与 USART2 的交叉收发和供电压降。
-6. 接 JY61P 前确认它真的处于 I²C 模式，且 5 V 供电时 SDA/SCL 不会将 PB6/PB7 拉到超过 3.3 V。
-7. 最后才连接步进电机，并保持参数确认门禁关闭。先确认线圈对、极性、额定电流和 `STBY`，再低占空比、无机械负载、短时地验证相序、温升和转速。
+实板尚未验收，尤其是电机参数、实际换相波形、供电跌落、JY61P 寄存器和 OLED 热恢复。
 
-所有模块必须共地。外部输入不得超过 3.3 V；JY61P 标有 5 V 供电并不代表其 I²C 逻辑一定安全，舵机电源也不得反向把 5 V 信号送入 PA6。
-
-## 运行边界与已知限制
-
-- TB6612 是双全桥直流驱动器，不是带 STEP/DIR、微步和恒流斩波的专用步进驱动器。本工程明确使用 A/B 两桥做四拍全步换相，不会虚构不存在的 STEP/DIR 引脚。
-- “42 型”只说明外形等级，不能推出线数、线圈对、步距角、每转步数、减速比、额定电流或额定电压。上述所有参数均为待实测/待确认。
-- `STBY` 没有已确认的 STM32 控制脚。它必须在硬件上可靠使能，且掉电、复位、HardFault 时应有独立的安全关断路径；软件 coast 不能代替硬件急停。
-- 当前失联和 ESP RX 溢出会停止步进；舵机是否回中由 `CFG_SERVO_CENTER_ON_LINK_TIMEOUT` 决定，默认值为 1。即使如此，实际水中/无人值守使用仍需要完成硬件失效保护验证。
-- JY61P 的 I²C 地址、寄存器、字节序、校验和 5 V 逻辑高电平均待确认。其未接出的 RX/TX 绝不会被误用为 STM32 UART。
-- 上游 `oled-ui-astra` 参考仓库具有不同的引脚、依赖和 GPL-3.0 边界；详见 `third_party/oled-ui-astra.UPSTREAM.md`。本工程没有直接复制或链接其上游源码。
-
-## 关联文档
-
-- [通信协议.md](通信协议.md)：命令/状态帧、序号、错误码和超时策略。
-- [硬件引脚与驱动说明.md](硬件引脚与驱动说明.md)：逐引脚核对、两桥两相接法和电平边界。
-- [验收检查清单.md](验收检查清单.md)：编译、接线、参数确认和实测放行条件。
+本状态页是自写固定内存实现；没有复制或链接上游 Astra，详见 `third_party/oled-ui-astra.UPSTREAM.md`。本轮不做 Astra 移植、分页或按键交互。

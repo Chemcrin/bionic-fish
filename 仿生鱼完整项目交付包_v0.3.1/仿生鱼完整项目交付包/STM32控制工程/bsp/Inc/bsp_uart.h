@@ -16,8 +16,12 @@ void BSP_Uart_OnError(UART_HandleTypeDef *huart);
 
 bool BSP_Uart_ReadEsp(uint8_t *byte);
 bool BSP_Uart_EspRxLost(void);
-void BSP_Uart_ClearEspRxLost(void);
-uint32_t BSP_Uart_EspRxOverflowCount(void);
+/* Main-loop atomic exchange: discard raw RX and consume its current loss flag.
+ * An ISR arriving after interrupts are restored sets a new, preserved flag. */
+bool BSP_Uart_EspTakeRxLostAndDiscard(void);
+bool BSP_Uart_EspTxIdle(void);
+/* Only after ESP reset/ready proves its old payload transaction no longer exists. */
+void BSP_Uart_EspAbortTx(void);
 
 bool BSP_Uart_SendEsp(const char *data, size_t length);
 bool BSP_Uart_SendDebug(const char *data, size_t length);

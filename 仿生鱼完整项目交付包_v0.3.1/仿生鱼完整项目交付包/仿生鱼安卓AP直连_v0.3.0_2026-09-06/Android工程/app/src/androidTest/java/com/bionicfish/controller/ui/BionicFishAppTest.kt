@@ -32,6 +32,7 @@ import com.bionicfish.controller.ui.model.BannerUiModel
 import com.bionicfish.controller.ui.model.ConnectionPhase
 import com.bionicfish.controller.ui.model.ConnectionUiState
 import com.bionicfish.controller.ui.model.ControlUiState
+import com.bionicfish.controller.ui.model.MoveDirection
 import com.bionicfish.controller.ui.model.SettingsUiState
 import com.bionicfish.controller.ui.model.TelemetryUiState
 import com.bionicfish.controller.ui.model.TransportKind
@@ -78,6 +79,38 @@ class BionicFishAppTest {
         composeRule.onNodeWithText("后退未启用：当前 STM32 安全策略只允许单方向步进。")
             .performScrollTo()
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun connectedForward_usesFixedLowSpeedWithoutSpeedSelection() {
+        val moves = mutableListOf<MoveDirection>()
+        composeRule.setContent {
+            BionicFishApp(
+                state = connectedControlState(),
+                actions = UiActions(onMoveChanged = { moves += it }),
+            )
+        }
+        composeRule.onNodeWithText("推进模式").assertExists()
+        composeRule.onAllNodes(hasText("RPM", substring = true)).assertCountEquals(0)
+        composeRule.onNodeWithText("前进").performScrollTo().assertIsEnabled().performClick()
+        composeRule.runOnIdle { assertEquals(listOf(MoveDirection.FORWARD), moves) }
+    }
+
+    @Test
+    fun fixedLowSpeedTelemetry_showsCommandedOutputAndUnmeasuredSpeed() {
+        composeRule.setContent {
+            BionicFishApp(
+                state = AppUiState(
+                    initialDestination = AppDestination.TELEMETRY,
+                    telemetry = TelemetryUiState(isStale = false, stepCommandedOn = true),
+                ),
+                actions = UiActions(),
+            )
+        }
+        composeRule.onNodeWithText("低速输出").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("命令状态，非实测转动").assertExists()
+        composeRule.onNodeWithText("未测量").performScrollTo().assertIsDisplayed()
+        composeRule.onAllNodes(hasText("RPM", substring = true)).assertCountEquals(0)
     }
 
     @Test
@@ -275,9 +308,7 @@ class BionicFishAppTest {
         connection = ConnectionUiState(phase = ConnectionPhase.CONNECTED),
         control = ControlUiState(
             enabled = true,
-            stepperParametersConfirmed = true,
             reverseSupported = false,
-            stepSpeedRpm = 60,
         ),
     )
 }

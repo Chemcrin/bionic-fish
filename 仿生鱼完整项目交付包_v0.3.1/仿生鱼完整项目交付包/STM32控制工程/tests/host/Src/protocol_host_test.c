@@ -30,6 +30,31 @@ static BfRemoteCommand StopCommand(uint16_t sequence)
     return command;
 }
 
+static void CheckPayloadBoundary(size_t payload_length, bool valid)
+{
+    ProtocolParser parser;
+    ProtocolEvent event;
+    char frame[CFG_PROTOCOL_PAYLOAD_MAX + 5U];
+    const char *prefix = "<CMD,seq=12,move=S,turn=C,step_speed=60,servo=0,extra=";
+    size_t offset = strlen(prefix);
+    memcpy(frame, prefix, offset);
+    while (offset < payload_length + 1U) {
+        frame[offset++] = 'x';
+    }
+    frame[offset++] = '>';
+    frame[offset++] = '\n';
+    frame[offset] = '\0';
+    Protocol_Init(&parser);
+    event = FeedText(&parser, frame);
+    if (valid) {
+        assert(event.kind == PROTO_EVENT_COMMAND && event.command.sequence == 12U);
+    } else {
+        assert(event.kind == PROTO_EVENT_ERROR && event.error == PROTO_ERR_TOO_LONG);
+        event = FeedText(&parser, "<CMD,seq=13,move=S,turn=C,step_speed=60,servo=0>\n");
+        assert(event.kind == PROTO_EVENT_COMMAND && event.command.sequence == 13U);
+    }
+}
+
 int main(void)
 {
     ProtocolParser parser;
@@ -50,8 +75,19 @@ int main(void)
     assert(strcmp(Protocol_ErrorName(PROTO_ERR_CONFIGURATION), "E_CONFIGURATION") == 0);
     memset(&snapshot, 0, sizeof(snapshot));
     assert(Protocol_EncodeStatus(status_frame, sizeof(status_frame), &snapshot) != 0U);
+    assert(strstr(status_frame, "step_rpm=NA,step_est=NA,step_actual=NA,step_on=0,") != 0);
     assert(strstr(status_frame, "roll=NA,pitch=NA,yaw=NA") != 0);
     assert(strstr(status_frame, "n20_") == 0);
+    snapshot.step_running = true;
+    snapshot.command_link_alive = true;
+    snapshot.last_sequence = UINT16_MAX;
+    snapshot.servo_deg = -30;
+    snapshot.attitude.valid = true;
+    snapshot.attitude.roll_ddeg = snapshot.attitude.pitch_ddeg = snapshot.attitude.yaw_ddeg = INT16_MIN;
+    snapshot.active_faults = UINT32_MAX;
+    /* Match the application's actual status buffer, including the new step_on field. */
+    assert(Protocol_EncodeStatus(status_frame, 160U, &snapshot) != 0U);
+    assert(strstr(status_frame, "step_rpm=NA,step_est=NA,step_actual=NA,step_on=1,") != 0);
 
     Protocol_Init(&parser);
     event = FeedText(&parser,
@@ -68,6 +104,13 @@ int main(void)
     assert(event.command.step_rpm == 100U);
     assert(event.command.servo_deg == -30);
     assert(Control_ValidateCommand(&event.command) == PROTO_ERR_NONE);
+
+    Protocol_Init(&parser);
+    event = FeedText(&parser,
+        "<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0,foo=x=y>\n");
+    assert(event.kind == PROTO_EVENT_ERROR && event.error == PROTO_ERR_FIELD);
+    CheckPayloadBoundary(CFG_PROTOCOL_PAYLOAD_MAX - 1U, true);
+    CheckPayloadBoundary(CFG_PROTOCOL_PAYLOAD_MAX, false);
 
     Protocol_Init(&parser);
     event = FeedText(&parser,
@@ -90,7 +133,18 @@ int main(void)
     event = FeedText(&parser,
         "<CMD,seq=3,move=F,turn=C,step_speed=60,servo=0>\n");
     assert(event.kind == PROTO_EVENT_COMMAND);
-    assert(Control_ValidateCommand(&event.command) == PROTO_ERR_STEPPER_HW_UNCONFIRMED);
+    assert(Control_ValidateCommand(&event.command) == PROTO_ERR_NONE);
+
+    Protocol_Init(&parser);
+    event = FeedText(&parser,
+        "<CMD,seq=3,move=F,turn=C,step_speed=100,servo=0>\n");
+    assert(event.kind == PROTO_EVENT_COMMAND);
+    assert(Control_ValidateCommand(&event.command) == PROTO_ERR_NONE);
+
+    Protocol_Init(&parser);
+    event = FeedText(&parser,
+        "<CMD,seq=3,move=F,turn=C,step_speed=10,servo=0>\n");
+    assert(event.kind == PROTO_EVENT_ERROR && event.error == PROTO_ERR_RANGE);
 
     Protocol_Init(&parser);
     event = FeedText(&parser,
@@ -113,6 +167,9 @@ int main(void)
     command = StopCommand(65535U);
     assert(Control_ClassifyCommand(&session, &command, &error) == CONTROL_REJECTED);
     assert(error == PROTO_ERR_SEQ_OLD);
+    command = StopCommand(0x8000U);
+    assert(Control_ClassifyCommand(&session, &command, &error) == CONTROL_REJECTED);
+    assert(error == PROTO_ERR_SEQ_AMBIGUOUS);
 
     command = StopCommand(4U);
     Control_AcceptNew(&session, &command, 0xFFFFFFF0UL);

@@ -35,7 +35,13 @@ static uint32_t s_faults;
 static uint32_t s_next_status_ms;
 static uint32_t s_next_led_ms;
 static uint32_t s_protocol_last_byte_ms;
-static bool s_oled_ok;
+static uint32_t s_next_oled_retry_ms;
+static uint8_t s_oled_address_index;
+static uint8_t s_scan_address;
+static bool s_scan_found;
+static bool s_last_server_ready;
+static bool s_last_client_connected;
+static uint32_t s_next_link_diagnostic_ms;
 
 static void SetFault(BfFault fault)
 {
@@ -61,7 +67,8 @@ static bool RuntimeTimerConfigurationMatches(void)
 
 static void Broadcast(const char *message, size_t length)
 {
-    bool esp_ok = EspLink_Send(message, length);
+    /* 无 TCP 客户端时仍向调试口报告，不能把正常离线视为 TX 丢帧。 */
+    bool esp_ok = !EspLink_IsClientConnected() || EspLink_Send(message, length);
     bool debug_ok = BSP_Uart_SendDebug(message, length);
     if (!esp_ok || !debug_ok) {
         SetFault(BF_FAULT_UART_TX_DROPPED);
@@ -138,8 +145,6 @@ static void RefreshSnapshot(void)
     s_snapshot.android_link_known = false;
     s_snapshot.android_link_alive = false;
     s_snapshot.last_sequence = s_session.last_sequence;
-    s_snapshot.step_target_rpm = s_motor.step_target_rpm;
-    s_snapshot.step_commanded_rpm = s_motor.step_commanded_rpm;
     s_snapshot.step_running = s_motor.step_running;
     s_snapshot.servo_deg = s_servo.commanded_deg;
     s_snapshot.attitude = s_jy61p.attitude;
@@ -184,27 +189,6 @@ static void ServiceProtocol(uint32_t now_ms)
     uint8_t byte;
     uint8_t budget = 64U;
 
-    if (EspLink_RxOverflow()) {
-        /* 溢出后，残缺字节绝不可继续拼成控制帧。 */
-        while (EspLink_Poll(&byte)) {
-            /* discard */
-        }
-        Protocol_Reset(&s_parser);
-        s_protocol_last_byte_ms = now_ms;
-        EspLink_ClearRxOverflow();
-        /* 字节已经丢失时，不能等到普通保活超时才停止步进；立即进入同一套
-         * 失联安全状态，并允许下一完整 CMD 重新建会话。 */
-        Control_ForceDisconnect(&s_session);
-        Motor_ApplyFailsafe(&s_motor);
-#if (CFG_SERVO_CENTER_ON_LINK_TIMEOUT != 0U)
-        Servo_Center(&s_servo);
-#endif
-        SetFault(BF_FAULT_LINK_TIMEOUT);
-        SetFault(BF_FAULT_ESP_RX_LOST);
-        ReplyError(false, 0U, PROTO_ERR_RX_OVERFLOW);
-        return;
-    }
-
     /* 必须在消费新字节前判定超时：迟到的续传字符不能拼接到旧半帧。 */
     ServiceProtocolFrameTimeout(now_ms);
 
@@ -235,8 +219,8 @@ static void ServiceStatus(uint32_t now_ms)
     }
 
     /* 周期 STA 是低优先级：预留空间给 ACK/ERR，串口堵塞不能拖慢控制。 */
-    if (EspLink_TxSpace()) {
-        if (!EspLink_Send(frame, length)) {
+    if (EspLink_IsClientConnected()) {
+        if (!EspLink_SendStatus(frame, length)) {
             SetFault(BF_FAULT_UART_TX_DROPPED);
         }
     }
@@ -247,57 +231,108 @@ static void ServiceStatus(uint32_t now_ms)
     }
 }
 
-/* SSD1306 上电后需数百 µs~数 ms 完成内部 POR；若 MCU 复位比屏就绪更快，首次
- * Probe 会 NACK。原实现只在 App_Init 初始化一次，失败便永不重试，屏会一直黑。
- * 此处多轮重试，并先从配置地址(0x3C)试起、失败再回退到相邻地址(0x3D)。 */
-static bool OledBringUp(void)
+/* 每次只探测一个地址。正常刷屏仍使用驱动的分块服务，不改变页面布局。 */
+static void ServiceOled(uint32_t now_ms)
 {
-    uint8_t addresses[2];
-    uint8_t attempt;
-    uint8_t index;
-    uint32_t started_ms;
-    bool ok = false;
-
-    addresses[0] = CFG_OLED_ADDR_7BIT;
-    addresses[1] = (uint8_t)(CFG_OLED_ADDR_7BIT ^ 0x01U); /* 0x3C<->0x3D */
-
-    for (attempt = 0U; (attempt < 8U) && !ok; attempt++) {
-        for (index = 0U; index < (uint8_t)(sizeof(addresses)); index++) {
-            if (Ssd1306_Init(&s_display, &s_oled_bus, addresses[index])) {
-                ok = true;
-                break;
-            }
+    if (!s_display.initialized) {
+        SetFault(BF_FAULT_OLED_I2C);
+        /* 初始化发送整组面板配置，留到步进停止时执行，避免延长正在运行的相位。 */
+        if (s_motor.step_running || (int32_t)(now_ms - s_next_oled_retry_ms) < 0) {
+            return;
         }
-        if (!ok) {
-            started_ms = BSP_Millis();
-            while ((uint32_t)(BSP_Millis() - started_ms) < 100U) {
-            }
+        s_next_oled_retry_ms = now_ms + CFG_OLED_RETRY_MS;
+        if (SoftI2c_BusRecover(&s_oled_bus) == SOFT_I2C_OK &&
+            Ssd1306_Init(&s_display, &s_oled_bus,
+                (uint8_t)(CFG_OLED_ADDR_7BIT ^ s_oled_address_index))) {
+            OledUi_Init(&s_ui, &s_display, now_ms);
+        } else {
+            s_oled_address_index ^= 1U;
         }
+        return;
     }
-    return ok;
+    OledUi_Update(&s_ui, now_ms, &s_snapshot);
+    OledUi_Service(&s_ui);
+    if (Ssd1306_I2cErrorActive(&s_display)) {
+        SetFault(BF_FAULT_OLED_I2C);
+    } else {
+        ClearFault(BF_FAULT_OLED_I2C);
+    }
 }
 
-/* 一次性把 OLED 所在软件 I2C(PB8/PB9)上 0x08..0x77 全部探测一遍，把有 ACK 的
- * 地址打到调试串口。若打印 I2CSCAN none，说明总线上没有设备响应 —— 指向接线/
- * 供电；若打印出 0x3C/0x3D 等，说明设备在但 init 另有原因。 */
-static void I2cScanDebug(void)
+/* 启动扫描每轮只探测一个地址，且只在步进停止、OLED无在途刷新时执行。 */
+static void ServiceI2cScan(void)
 {
-    uint8_t addr;
     char line[24];
-    bool any = false;
-
-    for (addr = 0x08U; addr < 0x78U; addr++) {
-        if (SoftI2c_Probe(&s_oled_bus, addr) == SOFT_I2C_OK) {
-            int n = snprintf(line, sizeof(line), "I2CSCAN 0x%02X\r\n", (unsigned int)addr);
-            if (n > 0) {
-                (void)BSP_Uart_SendDebug(line, (size_t)n);
-            }
-            any = true;
+    if (s_scan_address >= 0x78U || s_motor.step_running || !Ssd1306_IsIdle(&s_display) ||
+        BSP_Uart_DebugTxFree() < sizeof(line)) {
+        return;
+    }
+    if (SoftI2c_Probe(&s_oled_bus, s_scan_address) == SOFT_I2C_OK) {
+        int n = snprintf(line, sizeof(line), "I2CSCAN 0x%02X\r\n", (unsigned int)s_scan_address);
+        if (n > 0) {
+            (void)BSP_Uart_SendDebug(line, (size_t)n);
+        }
+        s_scan_found = true;
+    }
+    if (++s_scan_address >= 0x78U) {
+        if (!s_scan_found) {
+            static const char kNone[] = "I2CSCAN none\r\n";
+            (void)BSP_Uart_SendDebug(kNone, sizeof(kNone) - 1U);
         }
     }
-    if (!any) {
-        static const char kNone[] = "I2CSCAN none\r\n";
-        (void)BSP_Uart_SendDebug(kNone, sizeof(kNone) - 1U);
+}
+
+static void DisconnectControl(uint32_t now_ms)
+{
+    Protocol_Reset(&s_parser);
+    s_protocol_last_byte_ms = now_ms;
+    Control_ForceDisconnect(&s_session);
+    Motor_ApplyFailsafe(&s_motor);
+#if (CFG_SERVO_CENTER_ON_LINK_TIMEOUT != 0U)
+    Servo_Center(&s_servo);
+#endif
+    SetFault(BF_FAULT_LINK_TIMEOUT);
+}
+
+static void ServiceLinkEvents(uint32_t now_ms)
+{
+    uint32_t events = EspLink_TakeEvents();
+    if (events == 0U) {
+        return;
+    }
+    /* 链路层已清原始UART、IPD和待发队列；应用必须先撤销动作和序号窗口。 */
+    DisconnectControl(now_ms);
+    if ((events & ESP_LINK_EVENT_TX_FAILED) != 0U) {
+        SetFault(BF_FAULT_UART_TX_DROPPED);
+    }
+    if ((events & ESP_LINK_EVENT_RX_LOST) != 0U) {
+        SetFault(BF_FAULT_ESP_RX_LOST);
+        ReplyError(false, 0U, PROTO_ERR_RX_OVERFLOW);
+    }
+}
+
+static void ServiceLinkDiagnostics(uint32_t now_ms)
+{
+    bool ready = EspLink_IsServerReady();
+    bool connected = EspLink_IsClientConnected();
+    char line[128];
+    int n;
+    if (ready == s_last_server_ready && connected == s_last_client_connected &&
+        (int32_t)(now_ms - s_next_link_diagnostic_ms) < 0) {
+        return;
+    }
+    if (BSP_Uart_DebugTxFree() < sizeof(line)) {
+        return;
+    }
+    s_last_server_ready = ready;
+    s_last_client_connected = connected;
+    s_next_link_diagnostic_ms = now_ms + 5000UL;
+    n = snprintf(line, sizeof(line), "ESP server=%u tcp=%u reset=%u error=%s\r\n",
+        ready ? 1U : 0U, connected ? 1U : 0U,
+        EspLink_ResetNeeded() ? 1U : 0U, EspLink_LastError());
+    if (n > 0) {
+        size_t length = ((size_t)n < sizeof(line)) ? (size_t)n : sizeof(line) - 1U;
+        (void)BSP_Uart_SendDebug(line, length);
     }
 }
 
@@ -306,6 +341,8 @@ void App_Init(void)
     uint32_t now_ms = BSP_Millis();
 
     memset(&s_snapshot, 0, sizeof(s_snapshot));
+    memset(&s_display, 0, sizeof(s_display));
+    s_faults = 0U;
     ControlSession_Init(&s_session);
     Protocol_Init(&s_parser);
     BSP_Board_Init();
@@ -327,23 +364,23 @@ void App_Init(void)
     if (!Jy61p_Init(&s_jy61p, &s_jy61p_bus, now_ms)) {
         SetFault(BF_FAULT_IMU_DATA_TIMEOUT);
     }
-    s_oled_ok = OledBringUp();
-    if (!s_oled_ok) {
-        SetFault(BF_FAULT_OLED_I2C);
-    }
+    s_oled_address_index = 0U;
+    s_next_oled_retry_ms = now_ms + CFG_OLED_BOOT_DELAY_MS;
+    s_scan_address = 0x08U;
+    s_scan_found = false;
+    s_last_server_ready = false;
+    s_last_client_connected = false;
+    s_next_link_diagnostic_ms = now_ms;
+    SetFault(BF_FAULT_OLED_I2C);
     OledUi_Init(&s_ui, &s_display, now_ms);
 
-#if (CFG_STEPPER_DRIVER_ENABLED == 0U) || \
-    (CFG_STEPPER_PARAMETERS_CONFIRMED == 0U) || \
-    (CFG_STEPPER_COMMUTATIONS_PER_OUTPUT_REV == 0UL) || \
-    (CFG_STEPPER_WINDING_PWM_PERCENT == 0U)
-    SetFault(BF_FAULT_STEPPER_HW_UNCONFIRMED);
+#if (CFG_STEPPER_DRIVER_ENABLED == 0U)
+    SetFault(BF_FAULT_STEPPER_DISABLED);
 #endif
     s_next_status_ms = now_ms + CFG_STATUS_PERIOD_MS;
     s_next_led_ms = now_ms + 500UL;
     s_protocol_last_byte_ms = now_ms;
     RefreshSnapshot();
-    I2cScanDebug();
 }
 
 void App_Process(void)
@@ -352,31 +389,29 @@ void App_Process(void)
 
     EspLink_Service();
     BSP_Uart_Service();
+    ServiceLinkEvents(now_ms);
     ServiceProtocol(now_ms);
+    /* ACK 入队失败也可能在解析过程中触发断链，必须在本轮换相前处理。 */
+    ServiceLinkEvents(now_ms);
     if (Control_CheckTimeout(&s_session, now_ms)) {
-        Motor_ApplyFailsafe(&s_motor);
-#if (CFG_SERVO_CENTER_ON_LINK_TIMEOUT != 0U)
-        Servo_Center(&s_servo);
-#endif
-        SetFault(BF_FAULT_LINK_TIMEOUT);
+        DisconnectControl(now_ms);
+        EspLink_CloseClient();
     }
 
     Motor_Service(&s_motor, BSP_Micros());
     ServiceImu(now_ms);
+    Motor_Service(&s_motor, BSP_Micros());
     RefreshSnapshot();
-    OledUi_Update(&s_ui, now_ms, &s_snapshot);
-    OledUi_Service(&s_ui);
-    if (Ssd1306_I2cErrorActive(&s_display)) {
-        /* 运行期发送失败也必须进入 STA.err/UI，而不只在初始化阶段可见。 */
-        SetFault(BF_FAULT_OLED_I2C);
-    } else {
-        ClearFault(BF_FAULT_OLED_I2C);
-    }
+    ServiceOled(now_ms);
+    Motor_Service(&s_motor, BSP_Micros());
+    ServiceI2cScan();
+    ServiceLinkDiagnostics(now_ms);
     ServiceStatus(now_ms);
+    BSP_Uart_Service();
 
     if ((int32_t)(now_ms - s_next_led_ms) >= 0) {
         BSP_RunLed_Toggle();
         /* 调试判据：OLED 初始化失败(认不到屏)→快速闪烁；成功→正常慢闪。 */
-        s_next_led_ms = now_ms + (s_oled_ok ? 500UL : 120UL);
+        s_next_led_ms = now_ms + (s_display.initialized ? 500UL : 120UL);
     }
 }

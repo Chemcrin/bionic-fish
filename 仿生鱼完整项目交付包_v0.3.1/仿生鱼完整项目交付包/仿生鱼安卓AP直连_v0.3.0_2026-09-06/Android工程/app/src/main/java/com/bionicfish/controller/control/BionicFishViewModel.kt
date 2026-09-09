@@ -10,7 +10,6 @@ import com.bionicfish.controller.device.RepositoryConnectionPhase
 import com.bionicfish.controller.device.RepositoryState
 import com.bionicfish.controller.protocol.ControlInput
 import com.bionicfish.controller.protocol.Move
-import com.bionicfish.controller.protocol.StepSpeed
 import com.bionicfish.controller.protocol.Turn
 import com.bionicfish.controller.settings.AppSettings
 import com.bionicfish.controller.telemetry.DataFreshness
@@ -106,7 +105,6 @@ class BionicFishViewModel(
         onDismissBanner = ::dismissBanner,
         onBannerAction = ::retryConnection,
         onMoveChanged = ::setMove,
-        onStepSpeedChanged = ::setStepSpeed,
         onSteeringChanged = ::setSteering,
         onEmergencyStop = { emergencyStop("用户触发或离开控制页") },
         onControlModeChanged = ::setControlMode,
@@ -224,14 +222,6 @@ class BionicFishViewModel(
         submitControl(next)
     }
 
-    private fun setStepSpeed(rpm: Int) {
-        if (rpm !in setOf(60, 100)) {
-            showError("步进电机速度只能选择 60 或 100 RPM")
-            return
-        }
-        submitControl(controlDraft.value.copy(stepSpeedRpm = rpm))
-    }
-
     private fun setSteering(turn: TurnDirection, requestedDegrees: Int) {
         val degrees = requestedDegrees.coerceIn(-30, 30)
         val normalizedTurn = when {
@@ -251,7 +241,6 @@ class BionicFishViewModel(
         val input = ControlInput(
             move = next.move.toDomain(),
             turn = next.turn.toDomain(),
-            stepSpeed = if (next.stepSpeedRpm == 100) StepSpeed.FAST else StepSpeed.SLOW,
             servoDegrees = next.servoAngleDegrees.coerceIn(-30, 30),
         )
         launchRepositoryAction("控制指令发送失败") { repository.sendControl(input) }
@@ -569,7 +558,6 @@ private fun RepositoryState.toUiState(
         control = controlDraft.copy(
             enabled = connected,
             reverseSupported = reverseCommandAllowed,
-            stepperParametersConfirmed = stepperParametersConfirmed,
             stopPending = stopPending,
             mode = if (settings.pressAndHoldToMove) {
                 ControlMode.HOLD_TO_RUN
@@ -578,9 +566,10 @@ private fun RepositoryState.toUiState(
             },
         ),
         telemetry = TelemetryUiState(
-            targetStepRpm = telemetrySnapshot?.stepTargetRpm ?: 0,
+            targetStepRpm = telemetrySnapshot?.stepTargetRpm,
             estimatedStepRpm = telemetrySnapshot?.stepEstimatedRpm,
             actualStepRpm = telemetrySnapshot?.stepActualRpm?.toInt(),
+            stepCommandedOn = telemetrySnapshot?.stepCommandedOn,
             servoAngleDegrees = telemetrySnapshot?.servoDegrees ?: 0,
             rollDegrees = telemetrySnapshot?.rollDegrees?.toFloat(),
             pitchDegrees = telemetrySnapshot?.pitchDegrees?.toFloat(),

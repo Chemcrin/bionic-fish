@@ -15,6 +15,7 @@ static int16_t RawAngleToDdeg(int16_t raw)
     return (int16_t)(((int32_t)raw * 1800L) / 32768L);
 }
 
+#if (CFG_JY61P_MAX_DELTA_DDEG != 0)
 static int16_t WrappedDifferenceDdeg(int16_t a, int16_t b)
 {
     int32_t difference = (int32_t)a - (int32_t)b;
@@ -25,9 +26,15 @@ static int16_t WrappedDifferenceDdeg(int16_t a, int16_t b)
     }
     return (int16_t)difference;
 }
+#endif
 
 static bool IsPlausible(const BfAttitude *old_value, const BfAttitude *new_value)
 {
+#if (CFG_JY61P_MAX_DELTA_DDEG == 0)
+    (void)old_value;
+    (void)new_value;
+    return true;
+#else
     int16_t roll_delta;
     int16_t pitch_delta;
     int16_t yaw_delta;
@@ -43,6 +50,16 @@ static bool IsPlausible(const BfAttitude *old_value, const BfAttitude *new_value
            (pitch_delta <= CFG_JY61P_MAX_DELTA_DDEG) &&
            (yaw_delta >= -CFG_JY61P_MAX_DELTA_DDEG) &&
            (yaw_delta <= CFG_JY61P_MAX_DELTA_DDEG);
+#endif
+}
+
+static void RecordFailure(Jy61p *sensor)
+{
+    /* 长期断线不得在第 256 次回绕，重新关闭恢复分支。 */
+    if (sensor->consecutive_failures < UINT8_MAX) {
+        sensor->consecutive_failures++;
+    }
+    sensor->attitude.valid = false;
 }
 
 bool Jy61p_Init(Jy61p *sensor, SoftI2cBus *bus, uint32_t now_ms)
@@ -81,16 +98,18 @@ Jy61pResult Jy61p_Service(Jy61p *sensor, uint32_t now_ms)
     status = SoftI2c_ReadRegister(sensor->bus, CFG_JY61P_ADDR_7BIT,
                                   CFG_JY61P_ANGLE_START_REG, bytes, sizeof(bytes));
     if (status != SOFT_I2C_OK) {
-        sensor->consecutive_failures++;
+        RecordFailure(sensor);
         sensor->probed = false;
         /* ACK/总线错误后的旧姿态不能继续伪装成实时测量；下一次成功采样会重新
          * 置 valid。保留数值仅供调试，不供状态帧作为有效角度输出。 */
-        sensor->attitude.valid = false;
         if (sensor->consecutive_failures >= CFG_JY61P_MAX_CONSECUTIVE_FAILURES) {
             if (SoftI2c_BusRecover(sensor->bus) != SOFT_I2C_OK) {
                 return JY61P_RESULT_RECOVERY_FAILED;
             }
-            (void)SoftI2c_Probe(sensor->bus, CFG_JY61P_ADDR_7BIT);
+            sensor->probed = (SoftI2c_Probe(sensor->bus, CFG_JY61P_ADDR_7BIT) == SOFT_I2C_OK);
+            if (!sensor->probed) {
+                return JY61P_RESULT_RECOVERY_FAILED;
+            }
         }
         return JY61P_RESULT_I2C_ERROR;
     }
@@ -102,11 +121,15 @@ Jy61pResult Jy61p_Service(Jy61p *sensor, uint32_t now_ms)
     candidate.valid = true;
     candidate.last_update_ms = now_ms;
 
-    /* I2C 寄存器读没有串口 0x55 帧的 checksum；这里的校验是 ACK、范围和
-     * 相邻样本合理性。若实测固件提供 CRC，必须在此处加入其官方算法。 */
-    if (!IsPlausible(&sensor->attitude, &candidate)) {
-        sensor->consecutive_failures++;
+    /* I2C 寄存器读没有串口 0x55 帧的 checksum；这里只有 ACK 与可配置的
+     * 相邻样本跳变检查。原始 int16 的角度转换天然落在范围内，不能把它称作
+     * 独立的有效性校验。超过新鲜度窗口的旧样本不再作为比较基准。 */
+    if (Jy61p_IsStale(sensor, now_ms, CFG_JY61P_SAMPLE_PERIOD_MS *
+                                    CFG_JY61P_MAX_CONSECUTIVE_FAILURES * 2UL)) {
         sensor->attitude.valid = false;
+    }
+    if (!IsPlausible(&sensor->attitude, &candidate)) {
+        RecordFailure(sensor);
         return JY61P_RESULT_SAMPLE_INVALID;
     }
     sensor->attitude = candidate;

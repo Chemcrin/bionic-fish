@@ -1,0 +1,34 @@
+{
+  "cube_f1": {
+    "version": "1.8.6",
+    "repository": "https://github.com/STMicroelectronics/STM32CubeF1.git",
+    "commit": "42472d601caa457b02d849c7de5f9792629ee324",
+    "submodules": {
+      "Drivers/STM32F1xx_HAL_Driver": "77fbb30b7a1d02533980400083e48c559aae5a4f",
+      "Drivers/CMSIS/Device/ST/STM32F1xx": "8a76309ed1250d817e9c888c4417171d2ba3ba63"
+    }
+  },
+  "windows": {
+    "cmake": {
+      "version": "3.31.8",
+      "archive": "cmake-3.31.8-windows-x86_64.zip",
+      "directory": "cmake-3.31.8-windows-x86_64",
+      "url": "https://github.com/Kitware/CMake/releases/download/v3.31.8/cmake-3.31.8-windows-x86_64.zip",
+      "sha256": "81aa9964dbabd71fe02e7ec50472fd3ad56138c49944515ece9001efbff8d719"
+    },
+    "arm_gcc": {
+      "version": "13.3.rel1",
+      "archive": "arm-gnu-toolchain-13.3.rel1-mingw-w64-i686-arm-none-eabi.zip",
+      "directory": "arm-gnu-toolchain-13.3.rel1-mingw-w64-i686-arm-none-eabi",
+      "url": "https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-mingw-w64-i686-arm-none-eabi.zip",
+      "sha256": "e46fda043c0ce83582bc8db4b3ef85f77f4beb7333344c2f4193c17e1167a095"
+    },
+    "ninja": {
+      "version": "1.12.1",
+      "archive": "ninja-win-1.12.1.zip",
+      "directory": "ninja-1.12.1",
+      "url": "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-win.zip",
+      "sha256": "f550fec705b6d6ff58f2db3c374c2277a37691678d6aba463adcbb129108467a"
+    }
+  }
+}

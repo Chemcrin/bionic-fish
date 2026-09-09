@@ -27,6 +27,8 @@ void MX_TIM2_Init(void)
         (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)) {
         Error_Handler();
     }
+    /* HAL enables OC1/OC2 preload independently of AutoReloadPreload above.
+     * Keep it enabled; the BSP waits for duty changes before driving a bridge. */
     HAL_TIM_MspPostInit(&htim2);
 }
 

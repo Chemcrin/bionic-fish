@@ -1,6 +1,7 @@
 #include "bsp_board.h"
 
 #include "app_config.h"
+#include "bsp_time.h"
 #include "main.h"
 #include "tim.h"
 
@@ -13,6 +14,30 @@ static uint32_t PercentToCompare(TIM_HandleTypeDef *timer, uint8_t duty_percent)
         duty_percent = 100U;
     }
     return (period * duty_percent) / 100UL;
+}
+
+static bool SetBridgeCompare(uint32_t channel, uint8_t duty_percent)
+{
+    uint32_t compare = PercentToCompare(&htim2, duty_percent);
+    uint32_t started_at;
+
+    if (__HAL_TIM_GET_COMPARE(&htim2, channel) == compare) {
+        return true;
+    }
+    /* HAL enables OC preload: a CCR write alone leaves the old duty active.
+     * Before leaving coast, wait for a fresh natural update to load the new
+     * duty. Do not force UG: both bridges share TIM2's counter and PWM phase. */
+    __HAL_TIM_SET_COMPARE(&htim2, channel, compare);
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
+    started_at = BSP_Micros();
+    while (__HAL_TIM_GET_FLAG(&htim2, TIM_FLAG_UPDATE) == RESET) {
+        if (((uint32_t)(BSP_Micros() - started_at) >= 100UL) &&
+            (__HAL_TIM_GET_FLAG(&htim2, TIM_FLAG_UPDATE) == RESET)) {
+            Error_Handler();
+            return false;
+        }
+    }
+    return true;
 }
 
 static void SetAInputs(GPIO_PinState in1, GPIO_PinState in2)
@@ -102,8 +127,9 @@ void BSP_BridgeA_Set(BspBridgeState state, uint8_t duty_percent)
         BSP_BridgeA_Coast();
         return;
     }
-    ApplyBridgeA(state);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, PercentToCompare(&htim2, duty_percent));
+    if (SetBridgeCompare(TIM_CHANNEL_1, duty_percent)) {
+        ApplyBridgeA(state);
+    }
 }
 
 void BSP_BridgeB_Set(BspBridgeState state, uint8_t duty_percent)
@@ -112,8 +138,9 @@ void BSP_BridgeB_Set(BspBridgeState state, uint8_t duty_percent)
         BSP_BridgeB_Coast();
         return;
     }
-    ApplyBridgeB(state);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, PercentToCompare(&htim2, duty_percent));
+    if (SetBridgeCompare(TIM_CHANNEL_2, duty_percent)) {
+        ApplyBridgeB(state);
+    }
 }
 
 void BSP_BridgeA_Coast(void)

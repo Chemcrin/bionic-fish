@@ -21,11 +21,10 @@ static void DrawSnapshot(Ssd1306 *display, const BfSystemSnapshot *snapshot)
     char yaw[10];
 
     Ssd1306_Clear(display);
-    (void)snprintf(line, sizeof(line), "STEP:%s T:%3u", snapshot->step_running ? "ON" : "OFF",
-                   (unsigned int)snapshot->step_target_rpm);
+    (void)snprintf(line, sizeof(line), "STEP:%s LOW", snapshot->step_running ? "ON" : "OFF");
     Ssd1306_DrawString(display, 0U, 0U, line);
-    (void)snprintf(line, sizeof(line), "EST:%3u ACT:NA",
-                   (unsigned int)snapshot->step_commanded_rpm);
+    (void)snprintf(line, sizeof(line), "ACT:NA PWM:%u",
+                   snapshot->step_running ? (unsigned int)CFG_STEPPER_WINDING_PWM_PERCENT : 0U);
     Ssd1306_DrawString(display, 0U, 10U, line);
     (void)snprintf(line, sizeof(line), "SER:%+d LNK:%u", (int)snapshot->servo_deg,
                    snapshot->command_link_alive ? 1U : 0U);
@@ -54,13 +53,12 @@ void OledUi_Init(OledUi *ui, Ssd1306 *display, uint32_t now_ms)
     }
     memset(ui, 0, sizeof(*ui));
     ui->display = display;
-    ui->display_available = (display != 0) && display->initialized;
     ui->next_render_ms = now_ms;
 }
 
 void OledUi_Update(OledUi *ui, uint32_t now_ms, const BfSystemSnapshot *snapshot)
 {
-    if ((ui == 0) || !ui->display_available || (snapshot == 0) ||
+    if ((ui == 0) || (ui->display == 0) || !ui->display->initialized || (snapshot == 0) ||
         ((int32_t)(now_ms - ui->next_render_ms) < 0) || !Ssd1306_IsIdle(ui->display)) {
         return;
     }
@@ -72,7 +70,7 @@ void OledUi_Update(OledUi *ui, uint32_t now_ms, const BfSystemSnapshot *snapshot
 
 void OledUi_Service(OledUi *ui)
 {
-    if ((ui != 0) && ui->display_available) {
+    if ((ui != 0) && (ui->display != 0)) {
         Ssd1306_Service(ui->display);
     }
 }

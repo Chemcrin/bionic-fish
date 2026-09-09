@@ -86,4 +86,12 @@
 #include "stm32f1xx_hal_uart.h"
 #endif
 
+/* Standard STM32CubeF1 assertion contract; no generated forced-include file. */
+#ifdef USE_FULL_ASSERT
+void assert_failed(uint8_t *file, uint32_t line);
+#define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
+#else
+#define assert_param(expr) ((void)0U)
+#endif
+
 #endif /* __STM32F1xx_HAL_CONF_H */

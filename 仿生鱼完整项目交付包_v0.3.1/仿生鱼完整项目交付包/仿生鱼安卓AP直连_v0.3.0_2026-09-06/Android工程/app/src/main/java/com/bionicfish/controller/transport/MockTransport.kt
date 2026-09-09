@@ -65,14 +65,14 @@ class MockTransport(
         }
         val sequence = match.groupValues[1].toInt()
         val move = match.groupValues[2]
-        val stepRpm = if (move == "S") 0 else match.groupValues[4].toInt()
+        val stepOn = if (move == "S") 0 else 1
         val servo = match.groupValues[5].toInt()
         delay(responseDelayMillis)
         val response = buildString {
             append("<ACK,seq=$sequence,result=OK>\n")
             append(
-                "<STA,seq=$sequence,link=1,step_rpm=$stepRpm,step_est=$stepRpm," +
-                    "step_actual=NA,servo=$servo,roll=1.2,pitch=-2.4,yaw=85.7,err=0>\n",
+                "<STA,seq=$sequence,link=1,step_rpm=NA,step_est=NA," +
+                    "step_actual=NA,step_on=$stepOn,servo=$servo,roll=1.2,pitch=-2.4,yaw=85.7,err=0>\n",
             )
         }
         // 刻意拆成两段，持续覆盖真实网络拆包路径。

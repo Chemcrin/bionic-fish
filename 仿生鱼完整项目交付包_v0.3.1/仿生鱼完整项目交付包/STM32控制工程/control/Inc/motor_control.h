@@ -10,8 +10,6 @@
 typedef struct {
     bool step_running;
     bool step_reverse;
-    uint16_t step_target_rpm;
-    uint16_t step_commanded_rpm;
     uint8_t step_phase;
     uint32_t next_commutation_us;
 } MotorController;

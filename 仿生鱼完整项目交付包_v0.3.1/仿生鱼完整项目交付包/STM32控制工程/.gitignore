@@ -1,4 +1,5 @@
 build-host/
+build-firmware/
 build/
 Debug/
 Release/

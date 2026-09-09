@@ -217,7 +217,7 @@ class ApDirectUiTest {
                                 phase = if (connected) ConnectionPhase.CONNECTED else ConnectionPhase.DISCONNECTED,
                                 isApDirect = connected,
                             ),
-                            control = ControlUiState(enabled = connected, stepperParametersConfirmed = true),
+                            control = ControlUiState(enabled = connected),
                         ),
                         actions = UiActions(onConnectApDirect = { apCalls++ }),
                     )

@@ -2,8 +2,7 @@
  * @file app_config.h
  * @brief 本工程全部可调参数的唯一入口。
  *
- * 修改本文件前请先完成《硬件引脚与驱动说明.md》中的待确认项。尤其不能在
- * 未确认 TB6612 接法、步进电机额定电流和每输出转换相数时开启步进功能。
+ * 电机采用固定间隔、低占空比换相，只提供开/停控制，不声明实测机械 RPM。
  */
 #ifndef APP_CONFIG_H
 #define APP_CONFIG_H
@@ -27,13 +26,21 @@
 #define CFG_PROTOCOL_MAX_FIELDS                  16U
 #define CFG_PROTOCOL_FRAME_TIMEOUT_MS            250UL    /* 收到 '<' 后的最大组帧静默时间 */
 
+/* ESP-01S AT 固件的独立 AP/TCP 连接参数。 */
+#define CFG_ESP_AP_SSID                          "BionicFish-AP"
+#define CFG_ESP_AP_PASSWORD                      "12345678"
+#define CFG_ESP_AP_IP                            "192.168.4.1"
+#define CFG_ESP_AP_NETMASK                       "255.255.255.0"
+#define CFG_ESP_TCP_PORT                         9000U
+
 /* 周期与失联策略（均需整机试验后确认）。 */
 #define CFG_LINK_TIMEOUT_MS                      1000UL
 #define CFG_STATUS_PERIOD_MS                     200UL
 #define CFG_JY61P_SAMPLE_PERIOD_MS               50UL
 #define CFG_OLED_FRAME_PERIOD_MS                 200UL
+#define CFG_OLED_RETRY_MS                        2000UL
+#define CFG_OLED_BOOT_DELAY_MS                   200UL
 #define CFG_BUTTON_DEBOUNCE_MS                   30UL
-#define CFG_STEPPER_STOP_ON_LINK_TIMEOUT         1U
 #define CFG_SERVO_CENTER_ON_LINK_TIMEOUT         1U
 
 /* TIM2：APB1=36 MHz、分频器为 1 时，定时器时钟为 72 MHz。
@@ -68,15 +75,24 @@
 #define CFG_JY61P_ADDR_7BIT                      0x50U  /* 待实测 */
 #define CFG_JY61P_ANGLE_START_REG                0x3DU  /* roll/pitch/yaw 各 int16 LE，待确认 */
 #define CFG_JY61P_MAX_CONSECUTIVE_FAILURES       3U
-#define CFG_JY61P_MAX_DELTA_DDEG                 1800   /* 单个采样最大合理变化 180.0 度 */
+/* 相邻有效样本的宽松初值为 90 度/50 ms，必须在台架按实际运动校准。
+ * 0 显式禁用；启用值必须小于环绕后的最大差值 1800，否则筛选永远不拒绝。
+ * 跳变检查不能替代校验和，也不能证明未知寄存器映射正确。 */
+#ifndef CFG_JY61P_MAX_DELTA_DDEG
+#define CFG_JY61P_MAX_DELTA_DDEG                 900
+#endif
 
-/* TB6612 的 A/B 两个 H 桥全部用于一颗两相双极步进电机，不再支持 N20。
- * 代码保留完整四拍换相，但未知参数不能靠“42”外形自行推断。完成线圈、电流、
- * 步距角和减速比确认后，填写下面两项并将 PARAMETERS_CONFIRMED 改为 1。 */
+/* 两桥继续四拍换相；默认每 50 ms 换一相、10% PWM，收到前进命令后持续运行。
+ * 这是固定低速输出设置，不依赖每转步数，也不把旧协议的 60/100 当作 RPM。 */
+#ifndef CFG_STEPPER_DRIVER_ENABLED
 #define CFG_STEPPER_DRIVER_ENABLED                1U
-#define CFG_STEPPER_PARAMETERS_CONFIRMED          0U
-#define CFG_STEPPER_COMMUTATIONS_PER_OUTPUT_REV   0UL
-#define CFG_STEPPER_WINDING_PWM_PERCENT           0U
+#endif
+#ifndef CFG_STEPPER_COMMUTATION_PERIOD_US
+#define CFG_STEPPER_COMMUTATION_PERIOD_US         50000UL
+#endif
+#ifndef CFG_STEPPER_WINDING_PWM_PERCENT
+#define CFG_STEPPER_WINDING_PWM_PERCENT           10U
+#endif
 #define CFG_STEPPER_PHASE_REVERSED                0U
 #define CFG_STEPPER_UNIDIRECTIONAL                1U
 
@@ -84,14 +100,30 @@
 #define CFG_BUTTON_ACTIVE_LOW                     1U
 #define CFG_LED_ACTIVE_LOW                        1U
 
-#if (CFG_STEPPER_DRIVER_ENABLED > 1U) || (CFG_STEPPER_PARAMETERS_CONFIRMED > 1U) || \
+#if (CFG_STEPPER_DRIVER_ENABLED > 1U) || \
     (CFG_STEPPER_PHASE_REVERSED > 1U) || (CFG_STEPPER_UNIDIRECTIONAL > 1U) || \
-    (CFG_STEPPER_STOP_ON_LINK_TIMEOUT > 1U) || (CFG_SERVO_CENTER_ON_LINK_TIMEOUT > 1U)
+    (CFG_SERVO_CENTER_ON_LINK_TIMEOUT > 1U)
 #error "布尔配置开关只能为 0 或 1。"
 #endif
 
-#if (CFG_STEPPER_WINDING_PWM_PERCENT > 100U)
-#error "CFG_STEPPER_WINDING_PWM_PERCENT 必须在 0..100。"
+#if (CFG_STEPPER_WINDING_PWM_PERCENT == 0U) || (CFG_STEPPER_WINDING_PWM_PERCENT > 100U)
+#error "电机 PWM 必须在 1..100；禁用驱动使用 CFG_STEPPER_DRIVER_ENABLED=0。"
+#endif
+
+#if (CFG_STEPPER_COMMUTATION_PERIOD_US == 0UL) || (CFG_STEPPER_COMMUTATION_PERIOD_US > 0x7FFFFFFFUL)
+#error "换相间隔必须在 1..0x7FFFFFFF us，满足 uint32_t 回绕调度边界。"
+#endif
+
+#if (CFG_JY61P_MAX_DELTA_DDEG < 0) || (CFG_JY61P_MAX_DELTA_DDEG >= 1800)
+#error "姿态跳变筛选使用 0 禁用，或设置实测确认的 1..1799 ddeg 阈值。"
+#endif
+
+#if (CFG_JY61P_MAX_CONSECUTIVE_FAILURES == 0U) || (CFG_JY61P_MAX_CONSECUTIVE_FAILURES > 255U)
+#error "JY61P 连续失败阈值必须在 1..255。"
+#endif
+
+#if (CFG_OLED_CHUNK_BYTES == 0U) || (CFG_OLED_CHUNK_BYTES > 128U)
+#error "OLED 每次传输块必须在 1..128 字节。"
 #endif
 
 #if (CFG_PROTOCOL_FRAME_TIMEOUT_MS == 0UL)
@@ -120,12 +152,6 @@
 
 #if ((CFG_APB1_TIMER_CLOCK_HZ / (CFG_TIMEBASE_TIM_PRESCALER + 1UL)) != 1000000UL)
 #error "TIM4 的 PSC 必须得到 1 MHz 微秒时基。"
-#endif
-
-#if (CFG_STEPPER_PARAMETERS_CONFIRMED != 0U) && \
-    ((CFG_STEPPER_COMMUTATIONS_PER_OUTPUT_REV == 0UL) || \
-     (CFG_STEPPER_WINDING_PWM_PERCENT == 0U))
-#error "确认步进参数前必须填写每输出转换相数和安全线圈 PWM。"
 #endif
 
 #endif /* APP_CONFIG_H */

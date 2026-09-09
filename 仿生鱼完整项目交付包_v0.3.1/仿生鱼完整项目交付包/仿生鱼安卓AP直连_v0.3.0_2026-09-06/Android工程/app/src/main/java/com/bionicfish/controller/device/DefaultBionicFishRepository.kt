@@ -148,13 +148,16 @@ class DefaultBionicFishRepository(
         }
         scope.launch {
             telemetryTracker.state.collectLatest { telemetry ->
-                val confirmed = telemetry.snapshot?.let { it.faultBits and 16L == 0L } ?: false
-                mutableState.update { it.copy(telemetry = telemetry, stepperParametersConfirmed = confirmed) }
+                mutableState.update { it.copy(telemetry = telemetry) }
             }
         }
     }
 
     override suspend fun scan() {
+        if (currentSettings.transportKind == TransportKind.UDP) {
+            failMessage("UDP 已停用；当前 ESP-01S 请使用设备页 AP 直连（TCP）")
+            return
+        }
         val phaseAtRequest = mutableState.value.connection.phase
         if (activeTransport != null || phaseAtRequest in ACTIVE_SESSION_PHASES) {
             failMessage("活动连接期间不能扫描；请先安全断开当前设备")
@@ -225,6 +228,10 @@ class DefaultBionicFishRepository(
             ?: DiscoveredDevice.apDirect(currentSettings).takeIf { it.id == deviceId }
         if (device == null) {
             failMessage("所选设备已不在列表中，请重新扫描")
+            return
+        }
+        if (device.transportKind == TransportKind.UDP) {
+            failMessage("UDP 已停用；当前 ESP-01S 请使用设备页 AP 直连（TCP）")
             return
         }
         val intentEpoch = connectionIntentEpoch.incrementAndGet()
@@ -742,7 +749,12 @@ class DefaultBionicFishRepository(
             }
             is ProtocolFrame.Error -> {
                 lastInboundNanos = monotonicNanos()
-                val message = "STM32 拒绝命令：${frame.code}（seq=${frame.sequence ?: "NA"}）"
+                val reason = when (frame.code) {
+                    "E_STEPPER_DISABLED" -> "步进驱动已在固件中禁用（${frame.code}）"
+                    "E_STEPPER_HW_UNCONFIRMED" -> "旧固件尚未确认步进参数（${frame.code}）"
+                    else -> frame.code
+                }
+                val message = "STM32 拒绝命令：$reason（seq=${frame.sequence ?: "NA"}）"
                 failMessage(message)
                 frame.sequence?.let { sequence ->
                     acknowledgementWaiters.remove(sequence)

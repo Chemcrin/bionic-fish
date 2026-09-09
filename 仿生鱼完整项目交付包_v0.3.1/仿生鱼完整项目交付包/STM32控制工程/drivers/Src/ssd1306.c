@@ -94,6 +94,7 @@ static bool SendCommands(Ssd1306 *display, const uint8_t *commands, uint16_t len
     if (status != SOFT_I2C_OK) {
         display->i2c_failures++;
         display->i2c_error_active = true;
+        display->initialized = false;
         return false;
     }
     return true;
@@ -227,6 +228,8 @@ void Ssd1306_Service(Ssd1306 *display)
     if (status != SOFT_I2C_OK) {
         display->i2c_failures++;
         display->i2c_error_active = true;
+        /* 屏可能已经掉电复位。不能只重发显存便清错，必须由应用重新初始化。 */
+        display->initialized = false;
         display->refresh_active = false;
         return;
     }

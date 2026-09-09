@@ -18,6 +18,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -45,7 +46,19 @@ class MockTransportTest {
 
         assertTrue(frames.any { it.value == ProtocolFrame.Acknowledgement(4, false) })
         val status = frames.map { it.value }.filterIsInstance<ProtocolFrame.Status>().single()
-        assertEquals(100, status.stepTargetRpm)
+        assertNull(status.stepTargetRpm)
+        assertNull(status.stepEstimatedRpm)
+        assertNull(status.stepActualRpm)
+        assertEquals(true, status.stepCommandedOn)
         assertFalse(status.toString().contains("n20", ignoreCase = true))
+
+        val stopChunks = async(start = CoroutineStart.UNDISPATCHED) {
+            withTimeout(1_000L) { transport.incomingBytes.take(2).toList() }
+        }
+        transport.send(AsciiProtocol.encodeControl(ControlCommand(5, Move.STOP, Turn.CENTER, StepSpeed.SLOW, 0)))
+        val stopped = stopChunks.await().flatMap(decoder::feed).filterIsInstance<DecodeResult.Frame>()
+            .map { it.value }.filterIsInstance<ProtocolFrame.Status>().single()
+        assertEquals(false, stopped.stepCommandedOn)
+        assertNull(stopped.stepTargetRpm)
     }
 }

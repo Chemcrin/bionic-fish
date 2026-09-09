@@ -1,6 +1,6 @@
 package com.bionicfish.controller.settings
 
-/** 来自用户提供的 AP直连_安卓端修改指引.md；本机尚未进行 ESP 实物联调。 */
+/** 当前 STM32 ESP-AT/TCP 固件的 AP 默认值；必须与 app_config.h 同步。 */
 object ApDirectDefaults {
     const val SSID = "BionicFish-AP"
     const val HOST = "192.168.4.1"

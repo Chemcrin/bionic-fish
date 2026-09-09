@@ -1,38 +1,33 @@
-/* esp_link.h - ESP-01S 原厂 AT 固件 + TCP 服务器 模式的链路层
- *
- * 背景：STM32 通过 USART2 与 ESP-01S 通信。ESP 配置为「AP + TCP 服务器
- * (CIPMUX=1, CIPSERVER=1,9000)」。此模式下串口不是裸管道：下行要包
- * AT+CIPSEND=0,<len>，上行带 +IPD,0,<len>: 前缀和 AT 应答噪音。
- * 本模块把这一层透明化，让上层 app 继续按"纯 ASCII 帧"看待 ESP 通道。
- *
- * 依赖：bsp_uart 的裸收发 (BSP_Uart_ReadEsp/BSP_Uart_SendEsp) + bsp_time。
+/** ESP-01S AT + single-controller TCP. All APIs run in the main loop.
+ * GMR selects NONOS AT 1.7.4/1.7.5 (including 1 MB Nano AT) or ESP-AT 2.x.
+ * UART must already be CFG_UART_BAUD, 8N1, no RTS/CTS on the board's pins.
+ * Custom transparent ESP sketches are not supported.
  */
 #ifndef ESP_LINK_H
 #define ESP_LINK_H
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
-/* 初始化链路状态（在 App_Init 调用一次）。 */
+enum {
+    ESP_LINK_EVENT_RX_LOST = 1U << 0,
+    ESP_LINK_EVENT_DISCONNECTED = 1U << 1,
+    ESP_LINK_EVENT_TX_FAILED = 1U << 2
+};
 void EspLink_Init(void);
-
-/* 主循环周期调用：驱动 AT 上电配置、下行 CIPSEND 状态机、上行 +IPD 解码。 */
 void EspLink_Service(void);
-
-/* 把一条完整应用帧(ACK/ERR/STA，已含结尾 '\n')排队发给手机。满则返回 false。 */
-bool EspLink_Send(const char *frame, size_t length);
-
-/* 取一个已解码的手机上行字节；无则返回 false。供协议解析器轮询。 */
+/* Consume before parsing commands; reset protocol/session and actuators on any
+ * event. RX_LOST additionally means E_RX_OVERFLOW. Poll is gated until consumed. */
+uint32_t EspLink_TakeEvents(void);
 bool EspLink_Poll(uint8_t *byte);
-
-/* 是否还能再入队至少一条应用帧（用于上层低优先级门控）。 */
-bool EspLink_TxSpace(void);
-
-/* 上报是否发生了上行字节丢失/溢出(需上层丢弃残帧并复位会话)。 */
-bool EspLink_RxOverflow(void);
-
-/* 清除 RxOverflow 标志。 */
-void EspLink_ClearRxOverflow(void);
-
-#endif /* ESP_LINK_H */
+/* FIFO for ACK/ERR, independent replaceable slot for status; complete LF frames.
+ * No TCP client => false. Full event FIFO fails the session safely. */
+bool EspLink_Send(const char *frame, size_t length);
+bool EspLink_SendStatus(const char *frame, size_t length);
+bool EspLink_IsServerReady(void);
+bool EspLink_IsClientConnected(void);
+/* Release an established but expired command session. Quarantine its bytes
+ * immediately; finish any known send phase before issuing CIPCLOSE for its ID. */
+void EspLink_CloseClient(void);
+bool EspLink_ResetNeeded(void);
+const char *EspLink_LastError(void);
+#endif

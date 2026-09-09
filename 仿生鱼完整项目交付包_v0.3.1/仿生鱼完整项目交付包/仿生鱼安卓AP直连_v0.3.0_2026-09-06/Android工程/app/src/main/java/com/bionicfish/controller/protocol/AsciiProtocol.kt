@@ -68,6 +68,12 @@ object AsciiProtocol {
         }
         val stepTarget = fields["step_rpm"]?.toIntOrNull()?.takeIf { it in setOf(0, 60, 100) }
         val stepEstimate = fields["step_est"]?.toIntOrNull()?.takeIf { it in setOf(0, 60, 100) }
+        val stepOn = when (fields["step_on"]) {
+            null -> stepTarget?.let { it > 0 }
+            "0" -> false
+            "1" -> true
+            else -> return DecodeResult.Malformed(ProtocolParseError.INVALID_VALUE, raw)
+        }
         val stepActual = nullableNumber(fields["step_actual"])
         val servo = fields["servo"]?.toIntOrNull()?.takeIf { it in ControlCommand.SERVO_RANGE }
         val roll = nullableNumber(fields["roll"])
@@ -76,7 +82,9 @@ object AsciiProtocol {
         val faults = fields["err"]?.toLongOrNull()?.takeIf { it >= 0L }
 
         if (
-            sequence == null || link == null || stepTarget == null || stepEstimate == null ||
+            sequence == null || link == null ||
+            (stepTarget == null && fields["step_rpm"] != "NA") ||
+            (stepEstimate == null && fields["step_est"] != "NA") ||
             stepActual === InvalidNumber || servo == null || roll === InvalidNumber ||
             pitch === InvalidNumber || yaw === InvalidNumber || faults == null
         ) {
@@ -94,6 +102,7 @@ object AsciiProtocol {
                 pitchDegrees = pitch as Double?,
                 yawDegrees = yaw as Double?,
                 faultBits = faults,
+                stepCommandedOn = stepOn,
             ),
         )
     }

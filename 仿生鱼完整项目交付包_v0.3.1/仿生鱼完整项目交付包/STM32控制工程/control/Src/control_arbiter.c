@@ -52,11 +52,8 @@ ProtocolError Control_ValidateCommand(const BfRemoteCommand *command)
         return PROTO_ERR_STEP_REVERSE_UNSUPPORTED;
     }
     if (((command->move == BF_MOVE_FORWARD) || (command->move == BF_MOVE_REVERSE)) &&
-        ((CFG_STEPPER_DRIVER_ENABLED == 0U) ||
-         (CFG_STEPPER_PARAMETERS_CONFIRMED == 0U) ||
-         (CFG_STEPPER_COMMUTATIONS_PER_OUTPUT_REV == 0UL) ||
-         (CFG_STEPPER_WINDING_PWM_PERCENT == 0U))) {
-        return PROTO_ERR_STEPPER_HW_UNCONFIRMED;
+        (CFG_STEPPER_DRIVER_ENABLED == 0U)) {
+        return PROTO_ERR_STEPPER_DISABLED;
     }
     return PROTO_ERR_NONE;
 }

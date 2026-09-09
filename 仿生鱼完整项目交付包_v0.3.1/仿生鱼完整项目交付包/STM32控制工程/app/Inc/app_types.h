@@ -21,7 +21,7 @@ typedef struct {
     uint16_t sequence;
     BfMove move;
     BfTurn turn;
-    uint16_t step_rpm;
+    uint16_t step_rpm;             /* V1 step_speed=60/100 compatibility field; not an RPM target. */
     int8_t servo_deg;
 } BfRemoteCommand;
 
@@ -39,9 +39,7 @@ typedef struct {
     bool android_link_known;       /* 现有协议没有此信息，默认 false */
     bool android_link_alive;
     uint16_t last_sequence;
-    uint16_t step_target_rpm;
-    uint16_t step_commanded_rpm;   /* 无编码器：换相指令估算，绝非实测机械 RPM */
-    bool step_running;
+    bool step_running;            /* 驱动命令状态，不证明电机实际转动。 */
     int8_t servo_deg;
     BfAttitude attitude;
     uint32_t active_faults;

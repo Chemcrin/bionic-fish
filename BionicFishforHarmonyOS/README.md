@@ -1,4 +1,6 @@
-# 仿生鱼 HarmonyOS 上位机
+# 仿生鱼 HarmonyOS 上位机（暂停）
+
+> 2026-09-09：当前交付采用 STM32F103C8T6 + ESP-01S + Android TCP。本目录保留早期 WebSocket/JSON 骨架，暂停开发，不参与当前构建、部署或验收，也不能与当前 ESP-01S 固件直接配套。下文为历史设计记录。
 
 这是一个面向 HarmonyOS 设备的 ArkTS / Stage 模型上位机应用骨架，用于连接 ESP32-S3 WebSocket 网关，实现仿生鱼的实时数据收发、方向控制、参数下发和基础遥测显示。
 

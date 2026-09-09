@@ -127,18 +127,23 @@ fun TelemetryScreen(
             ResponsivePair(
                 first = { modifier ->
                     MetricCard(
-                        label = "目标转速",
-                        value = "${telemetry.targetStepRpm} RPM",
-                        valid = fresh,
+                        label = "驱动输出",
+                        value = when (telemetry.stepCommandedOn) {
+                            true -> "低速输出"
+                            false -> "停止"
+                            null -> "未知"
+                        },
+                        supporting = "命令状态，非实测转动",
+                        valid = fresh && telemetry.stepCommandedOn != null,
                         modifier = modifier,
                     )
                 },
                 second = { modifier ->
                     MetricCard(
-                        label = "换相估算转速",
-                        value = telemetry.estimatedStepRpm?.let { "$it RPM" } ?: "不可用",
-                        supporting = "无编码器，非实测转速",
-                        valid = fresh && telemetry.estimatedStepRpm != null,
+                        label = "运行模式",
+                        value = "固定低速",
+                        supporting = "无需选择速度档位",
+                        valid = fresh,
                         modifier = modifier,
                     )
                 },
@@ -146,7 +151,7 @@ fun TelemetryScreen(
             Spacer(Modifier.height(FishSpacing.sm))
             MetricCard(
                 label = "实际转速",
-                value = telemetry.actualStepRpm?.let { "$it RPM" } ?: "不可用",
+                value = telemetry.actualStepRpm?.let { "$it RPM" } ?: "未测量",
                 supporting = if (telemetry.actualStepRpm == null) "当前硬件无速度传感器" else "来自实测",
                 valid = fresh && telemetry.actualStepRpm != null,
                 modifier = Modifier.fillMaxWidth(),

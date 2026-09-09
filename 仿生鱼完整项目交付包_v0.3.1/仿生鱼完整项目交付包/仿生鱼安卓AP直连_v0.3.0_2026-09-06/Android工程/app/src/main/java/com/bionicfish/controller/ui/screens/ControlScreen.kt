@@ -25,10 +25,8 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material.icons.filled.Straight
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -94,7 +92,7 @@ fun ControlScreen(
 ) {
     val connectionPhase = connection.phase
     val connected = connectionPhase == ConnectionPhase.CONNECTED
-    val driveEnabled = connected && control.enabled && control.stepperParametersConfirmed
+    val driveEnabled = connected && control.enabled
     val steeringEnabled = connected && control.enabled
     val context = LocalContext.current
     val accessibilityManager = remember(context) {
@@ -153,10 +151,6 @@ fun ControlScreen(
                 control = control,
             )
 
-            if (!control.stepperParametersConfirmed) {
-                HardwareGateNotice()
-            }
-
             SectionCard(title = "操纵") {
                 ControlModeRow(
                     mode = effectiveControlMode,
@@ -167,38 +161,11 @@ fun ControlScreen(
                 HorizontalDivider(Modifier.padding(vertical = FishSpacing.md))
 
                 ControlSectionLabel(
-                    title = "速度档位",
-                    supporting = "先选择目标转速，再启动推进。",
-                )
-                Spacer(Modifier.height(FishSpacing.sm))
-                AdaptiveChoicePair(
-                    first = { modifier ->
-                        SpeedChoice(
-                            rpm = 60,
-                            selected = control.stepSpeedRpm == 60,
-                            enabled = driveEnabled,
-                            onClick = { actions.onStepSpeedChanged(60) },
-                            modifier = modifier,
-                        )
-                    },
-                    second = { modifier ->
-                        SpeedChoice(
-                            rpm = 100,
-                            selected = control.stepSpeedRpm == 100,
-                            enabled = driveEnabled,
-                            onClick = { actions.onStepSpeedChanged(100) },
-                            modifier = modifier,
-                        )
-                    },
-                )
-
-                Spacer(Modifier.height(FishSpacing.md))
-                ControlSectionLabel(
                     title = "推进",
                     supporting = if (effectiveControlMode == ControlMode.HOLD_TO_RUN) {
-                        "按住运行，松手自动停止。"
+                        "按住低速推进，松手自动停止。"
                     } else {
-                        "点击后持续运行，请使用停止键结束。"
+                        "点击后持续低速推进，请使用停止键结束。"
                     },
                 )
                 Spacer(Modifier.height(FishSpacing.sm))
@@ -434,13 +401,13 @@ private fun CommandMetricStrip(control: ControlUiState) {
         if (useColumn) {
             Column(verticalArrangement = Arrangement.spacedBy(FishSpacing.xs)) {
                 CommandMetric("推进", moveLabel(control.move), Modifier.fillMaxWidth())
-                CommandMetric("目标档位", "${control.stepSpeedRpm} RPM", Modifier.fillMaxWidth())
+                CommandMetric("推进模式", "固定低速", Modifier.fillMaxWidth())
                 CommandMetric("舵机", "${formatSigned(control.servoAngleDegrees)}°", Modifier.fillMaxWidth())
             }
         } else {
             Row(horizontalArrangement = Arrangement.spacedBy(FishSpacing.xs)) {
                 CommandMetric("推进", moveLabel(control.move), Modifier.weight(1f))
-                CommandMetric("目标档位", "${control.stepSpeedRpm} RPM", Modifier.weight(1f))
+                CommandMetric("推进模式", "固定低速", Modifier.weight(1f))
                 CommandMetric("舵机", "${formatSigned(control.servoAngleDegrees)}°", Modifier.weight(1f))
             }
         }
@@ -474,29 +441,6 @@ private fun CommandMetric(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
             )
-        }
-    }
-}
-
-@Composable
-private fun HardwareGateNotice() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-        ),
-    ) {
-        Row(Modifier.padding(FishSpacing.md), verticalAlignment = Alignment.Top) {
-            Icon(Icons.Default.Warning, contentDescription = null)
-            Spacer(Modifier.width(FishSpacing.sm))
-            Column {
-                Text("步进参数未确认", fontWeight = FontWeight.SemiBold)
-                Text(
-                    "固件会拒绝推进。请先实测线圈、步距角、减速比与安全 PWM；舵机仍按连接状态独立控制。",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
         }
     }
 }
@@ -622,24 +566,6 @@ private fun DirectionButton(
 }
 
 @Composable
-private fun SpeedChoice(
-    rpm: Int,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier,
-) {
-    SelectableChoiceButton(
-        label = if (rpm == 60) "慢速 · 60 RPM" else "快速 · 100 RPM",
-        icon = Icons.Default.Speed,
-        selected = selected,
-        enabled = enabled,
-        onClick = onClick,
-        modifier = modifier,
-    )
-}
-
-@Composable
 private fun TurnChoice(
     label: String,
     icon: ImageVector,
@@ -733,7 +659,7 @@ private fun TargetCommandDetails(control: ControlUiState) {
     Column(verticalArrangement = Arrangement.spacedBy(FishSpacing.xs)) {
         TargetCommandRow("推进", moveLabel(control.move))
         TargetCommandRow("转向", turnLabel(control.turn))
-        TargetCommandRow("步进档位", "${control.stepSpeedRpm} RPM")
+        TargetCommandRow("推进方式", "固定低速")
         TargetCommandRow("舵机角度", "${formatSigned(control.servoAngleDegrees)}°")
         Text(
             text = "这里显示待发送/已下达的目标，不代表传感器实测值；实际状态请查看“状态”页。",
@@ -878,10 +804,8 @@ private fun ControlScreenPreview() {
                 enabled = true,
                 move = MoveDirection.FORWARD,
                 turn = TurnDirection.LEFT,
-                stepSpeedRpm = 60,
                 servoAngleDegrees = -30,
                 reverseSupported = false,
-                stepperParametersConfirmed = true,
             ),
         ),
         actions = UiActions(),

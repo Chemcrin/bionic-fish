@@ -10,7 +10,7 @@ typedef enum {
     BF_FAULT_ESP_RX_LOST              = (1UL << 1),
     BF_FAULT_IMU_DATA_TIMEOUT         = (1UL << 2),
     BF_FAULT_IMU_I2C_RECOVERY_FAILED  = (1UL << 3),
-    BF_FAULT_STEPPER_HW_UNCONFIRMED   = (1UL << 4),
+    BF_FAULT_STEPPER_DISABLED         = (1UL << 4),
     BF_FAULT_UART_TX_DROPPED          = (1UL << 5),
     /* bit6 为协议兼容性预留位；未经协议版本升级不得复用。 */
     BF_FAULT_OLED_I2C                 = (1UL << 7),

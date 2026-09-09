@@ -6,17 +6,20 @@
 /* USER CODE END Header */
 #include "main.h"
 
+/* USER CODE BEGIN Includes */
 #include "app_config.h"
 #include "app.h"
 #include "bsp_board.h"
 #include "bsp_time.h"
 #include "bsp_uart.h"
+/* USER CODE END Includes */
 #include "gpio.h"
 #include "tim.h"
 #include "usart.h"
 
 static void SystemClock_Config(void);
 
+/* USER CODE BEGIN PD */
 /* app_config.h 中的数值在这里映射为 HAL 枚举，避免 PLL/APB 设置与配置表脱节。 */
 #if (CFG_PLL_MULTIPLIER == 2UL)
 #define APP_PLL_MULTIPLIER RCC_PLL_MUL2
@@ -89,6 +92,7 @@ static void SystemClock_Config(void);
 #else
 #error "CFG_SYSCLK_HZ 超过 STM32F103 的 72 MHz 上限。"
 #endif
+/* USER CODE END PD */
 
 int main(void)
 {
@@ -102,13 +106,17 @@ int main(void)
     MX_USART2_UART_Init();
     MX_USART3_UART_Init();
 
+    /* USER CODE BEGIN 2 */
     BSP_Time_Init();
     App_Init();
+    /* USER CODE END 2 */
 
     while (1) {
+        /* USER CODE BEGIN 3 */
         /* 解析、控制、UI 和超时检查都在这里运行；中断不做阻塞业务。 */
         App_Process();
     }
+    /* USER CODE END 3 */
 }
 
 static void SystemClock_Config(void)
@@ -138,6 +146,7 @@ static void SystemClock_Config(void)
     }
 }
 
+/* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM4) {
@@ -159,9 +168,11 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
     BSP_Uart_OnError(huart);
 }
+/* USER CODE END 4 */
 
 void Error_Handler(void)
 {
+    /* USER CODE BEGIN Error_Handler_Debug */
     /* 普通 HAL/初始化错误发生在 PWM 已成功启动后时，先尽力让两桥 coast；
      * HardFault、复位与掉电仍必须依靠经实测的硬件失效保护。 */
     BSP_Board_EmergencyCoast();
@@ -169,4 +180,5 @@ void Error_Handler(void)
     while (1) {
         /* 若需生产级硬故障诊断，请加独立看门狗和故障记录；不要在此驱动电机。 */
     }
+    /* USER CODE END Error_Handler_Debug */
 }

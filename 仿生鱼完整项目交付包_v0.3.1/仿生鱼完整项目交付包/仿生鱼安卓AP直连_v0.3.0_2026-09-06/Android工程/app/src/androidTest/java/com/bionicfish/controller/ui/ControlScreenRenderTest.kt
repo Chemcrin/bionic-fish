@@ -89,10 +89,8 @@ class ControlScreenRenderTest {
             enabled = true,
             move = MoveDirection.FORWARD,
             turn = TurnDirection.LEFT,
-            stepSpeedRpm = 60,
             servoAngleDegrees = -30,
             reverseSupported = false,
-            stepperParametersConfirmed = true,
         ),
     )
 }

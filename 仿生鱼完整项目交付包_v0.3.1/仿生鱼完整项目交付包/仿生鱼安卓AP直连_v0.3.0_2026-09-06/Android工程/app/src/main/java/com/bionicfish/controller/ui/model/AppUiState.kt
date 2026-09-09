@@ -94,18 +94,17 @@ data class ControlUiState(
     val enabled: Boolean = false,
     val move: MoveDirection = MoveDirection.STOP,
     val turn: TurnDirection = TurnDirection.CENTER,
-    val stepSpeedRpm: Int = 60,
     val servoAngleDegrees: Int = 0,
     val reverseSupported: Boolean = false,
-    val stepperParametersConfirmed: Boolean = false,
     val mode: ControlMode = ControlMode.EXPLICIT_STOP,
     val stopPending: Boolean = false,
 )
 
 data class TelemetryUiState(
-    val targetStepRpm: Int = 0,
+    val targetStepRpm: Int? = null,
     val estimatedStepRpm: Int? = null,
     val actualStepRpm: Int? = null,
+    val stepCommandedOn: Boolean? = null,
     val servoAngleDegrees: Int = 0,
     val rollDegrees: Float? = null,
     val pitchDegrees: Float? = null,
@@ -175,7 +174,6 @@ data class UiActions(
     val onDismissBanner: () -> Unit = {},
     val onBannerAction: () -> Unit = {},
     val onMoveChanged: (MoveDirection) -> Unit = {},
-    val onStepSpeedChanged: (Int) -> Unit = {},
     /** turn 和 servo 必须原子更新，避免发出瞬时语义不一致的控制帧。 */
     val onSteeringChanged: (TurnDirection, Int) -> Unit = { _, _ -> },
     val onEmergencyStop: () -> Unit = {},

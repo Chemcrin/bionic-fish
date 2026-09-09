@@ -38,11 +38,63 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultBionicFishRepositoryTest {
+    @Test
+    fun `legacy UDP settings cannot start an unsupported hardware scan`() = runTest {
+        var transportsCreated = 0
+        val repository = DefaultBionicFishRepository(
+            settingsStore = InMemorySettingsStore(AppSettings(transportKind = TransportKind.UDP)),
+            transportFactory = TransportFactory {
+                transportsCreated += 1
+                error("Unsupported UDP must be rejected before creating a transport")
+            },
+            bluetoothCapabilityProvider = BluetoothCapabilityProvider { BluetoothCapabilities(false, false) },
+            scope = backgroundScope,
+        )
+        runCurrent()
+        repository.scan()
+        assertEquals(0, transportsCreated)
+        assertTrue(repository.state.value.latestMessage?.text?.contains("UDP 已停用") == true)
+    }
+
+    @Test
+    fun `UDP candidate cannot create a connection transport or send a handshake`() = runTest {
+        // A discovery result can carry its own transport kind; validate the selected
+        // candidate even when the current settings themselves are an allowed mode.
+        val discoveryTransport = PriorityProbeTransport(kind = TransportKind.UDP)
+        val createdKinds = mutableListOf<TransportKind>()
+        val repository = DefaultBionicFishRepository(
+            settingsStore = InMemorySettingsStore(AppSettings(transportKind = TransportKind.MOCK)),
+            transportFactory = TransportFactory { kind ->
+                createdKinds += kind
+                check(kind == TransportKind.MOCK) { "UDP must be rejected before transport creation" }
+                discoveryTransport
+            },
+            bluetoothCapabilityProvider = BluetoothCapabilityProvider { BluetoothCapabilities(false, false) },
+            scope = backgroundScope,
+        )
+        runCurrent()
+        repository.scan()
+        val candidate = repository.state.value.devices.single()
+        assertEquals(TransportKind.UDP, candidate.transportKind)
+        assertEquals(listOf(TransportKind.MOCK), createdKinds)
+
+        repository.connect(candidate.id)
+        runCurrent()
+
+        assertEquals(listOf(TransportKind.MOCK), createdKinds)
+        assertTrue(discoveryTransport.connectedEndpoints.isEmpty())
+        assertTrue(discoveryTransport.sentFrames.isEmpty())
+        assertEquals(RepositoryConnectionPhase.DISCONNECTED, repository.state.value.connection.phase)
+        assertEquals(HandshakeStatus.NOT_STARTED, repository.state.value.connection.handshakeStatus)
+        assertTrue(repository.state.value.latestMessage?.text?.contains("UDP 已停用") == true)
+    }
+
     @Test
     fun `mock scan handshake control telemetry and safe stop share one protocol path`() = runTest {
         val dispatcher = UnconfinedTestDispatcher(testScheduler)
@@ -72,20 +124,22 @@ class DefaultBionicFishRepositoryTest {
         assertEquals(RepositoryConnectionPhase.CONNECTED, repository.state.value.connection.phase)
         assertEquals(HandshakeStatus.VERIFIED_V1_COMPATIBLE, repository.state.value.connection.handshakeStatus)
         assertNotNull(repository.state.value.telemetry.snapshot)
-        assertTrue(repository.state.value.stepperParametersConfirmed)
+        assertEquals(false, repository.state.value.telemetry.snapshot?.stepCommandedOn)
 
         repository.sendControl(
             ControlInput(Move.FORWARD, Turn.LEFT, StepSpeed.FAST, servoDegrees = -30),
         )
         runCurrent()
-        assertEquals(100, repository.state.value.telemetry.snapshot?.stepTargetRpm)
+        assertNull(repository.state.value.telemetry.snapshot?.stepTargetRpm)
+        assertEquals(true, repository.state.value.telemetry.snapshot?.stepCommandedOn)
         assertEquals(-30, repository.state.value.telemetry.snapshot?.servoDegrees)
         assertFalse(repository.exportLogs().contains("n20", ignoreCase = true))
 
         repository.updateSettings(repository.state.value.settings.copy(centerServoOnSafeStop = false))
         repository.sendSafeStop("单元测试")
         runCurrent()
-        assertEquals(0, repository.state.value.telemetry.snapshot?.stepTargetRpm)
+        assertNull(repository.state.value.telemetry.snapshot?.stepTargetRpm)
+        assertEquals(false, repository.state.value.telemetry.snapshot?.stepCommandedOn)
         assertEquals(-30, repository.state.value.telemetry.snapshot?.servoDegrees)
         assertTrue(repository.exportLogs().contains("move=S,turn=L,step_speed=100,servo=-30"))
 

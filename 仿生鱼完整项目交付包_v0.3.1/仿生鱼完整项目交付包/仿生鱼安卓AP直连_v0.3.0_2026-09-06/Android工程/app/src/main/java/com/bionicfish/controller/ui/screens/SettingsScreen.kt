@@ -120,9 +120,9 @@ fun SettingsScreen(
             SettingsTransportChip(
                 selected = settings.selectedTransport == TransportKind.WIFI_UDP,
                 label = "Wi-Fi UDP",
-                description = "只在 ESP 固件明确采用 UDP 时使用。",
+                description = "历史扩展，当前 ESP-01S 交付仅支持 TCP。",
                 icon = Icons.Default.Wifi,
-                enabled = connectionSettingsEnabled,
+                enabled = false,
                 onClick = { actions.onSelectTransport(TransportKind.WIFI_UDP) },
             )
             if (bluetoothHardwareAvailable) {

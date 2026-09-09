@@ -79,19 +79,21 @@ class DataStoreSettingsStore(
 
     private fun decode(preferences: Preferences): AppSettings {
         val defaults = AppSettings()
+        val savedTransport = runCatching {
+            TransportKind.valueOf(preferences[Keys.TRANSPORT] ?: defaults.transportKind.name)
+        }.getOrDefault(defaults.transportKind)
+        val legacyUdp = savedTransport == TransportKind.UDP
         return AppSettings(
-            transportKind = runCatching {
-                TransportKind.valueOf(preferences[Keys.TRANSPORT] ?: defaults.transportKind.name)
-            }.getOrDefault(defaults.transportKind),
+            transportKind = if (legacyUdp) TransportKind.TCP else savedTransport,
             wifiHost = preferences[Keys.WIFI_HOST] ?: defaults.wifiHost,
             wifiPort = preferences[Keys.WIFI_PORT] ?: defaults.wifiPort,
             apSsid = preferences[Keys.AP_SSID] ?: defaults.apSsid,
             apHost = preferences[Keys.AP_HOST] ?: defaults.apHost,
             apPort = preferences[Keys.AP_PORT] ?: defaults.apPort,
             lastDeviceApDirect = preferences[Keys.LAST_AP_DIRECT] ?: defaults.lastDeviceApDirect,
-            discoveryAddress = preferences[Keys.DISCOVERY_ADDRESS] ?: defaults.discoveryAddress,
-            discoveryPort = preferences[Keys.DISCOVERY_PORT] ?: defaults.discoveryPort,
-            discoveryPayload = preferences[Keys.DISCOVERY_PAYLOAD] ?: defaults.discoveryPayload,
+            discoveryAddress = if (legacyUdp) "" else preferences[Keys.DISCOVERY_ADDRESS] ?: defaults.discoveryAddress,
+            discoveryPort = if (legacyUdp) 0 else preferences[Keys.DISCOVERY_PORT] ?: defaults.discoveryPort,
+            discoveryPayload = if (legacyUdp) "" else preferences[Keys.DISCOVERY_PAYLOAD] ?: defaults.discoveryPayload,
             bluetoothClassicUuid = preferences[Keys.BT_CLASSIC_UUID] ?: defaults.bluetoothClassicUuid,
             bluetoothLeServiceUuid = preferences[Keys.BT_LE_UUID] ?: defaults.bluetoothLeServiceUuid,
             bluetoothLeCharacteristicUuid = preferences[Keys.BT_LE_CHARACTERISTIC_UUID]
