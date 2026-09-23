@@ -41,13 +41,24 @@
 #endif
 
 /* Wi-Fi 工作模式（AT+CWMODE）：
- *   2 = 仅 SoftAP（原行为；手机必须加入 BionicFish-AP，但手机会失去外网）
- *   3 = AP + STA 并存（推荐）：保留 BionicFish-AP 作兜底，同时让 ESP 加入下面的
- *       外部网络，于是同一网络内的 PC/手机可直接访问 <STA_IP>:9000。
- * 实测环境：ESP-01S，AT 1.7.4.0 / SDK 3.0.5-dev，8Mbit(512KB+512KB)。
- * 该模块的 AT+CWJAP 凭据掉电保持，AT+RST 后会自动重连并取回同一 IP。 */
+ *   2 = 仅 SoftAP（**当前选定值**；手机必须加入 BionicFish-AP，但手机会失去外网）
+ *   3 = AP + STA 并存（**当前不可用，见下方警告**）
+ *
+ * ⚠️ 2026-09-23 重大回归修复：本宏在 v0.5 引入时默认写成了 3，导致 IP 直连网页
+ * 控制页彻底打不开。原因是**配置自相矛盾**：
+ *     SET_MODE 下发 AT+CWMODE=3（要 AP+STA 双模），
+ *     但固件**从不下发 AT+CWJAP**（见下方注释），STA 侧永远拿不到凭据。
+ * ESP-01S 于是反复去连 flash 里残留的旧 AP，落成 sta=0.0.0.0；双模下模块内存
+ * （仅 1MB flash）还要同时维护 AP 的 DHCP 服务器与 CIPSERVERMAXCONN 个 socket
+ * 槽位，最终导致客户端拿不到 IP / AP 转发失效。
+ *
+ * v0.5 之前的版本（提交 9b97230）**根本没有本宏**，SET_MODE 写死 AT+CWMODE=2
+ * （纯 AP），因此网页一直正常 —— 这正是"下午改代码之前是好的"的原因。
+ * 若要重新启用 3，**必须同时实现 AT+CWJAP 下发**，否则 3 永远是坏配置。
+ *
+ * 实测环境：ESP-01S，AT 1.7.4.0 / SDK 3.0.5-dev，8Mbit(512KB+512KB)。 */
 #ifndef CFG_ESP_WIFI_MODE
-#define CFG_ESP_WIFI_MODE                        3U
+#define CFG_ESP_WIFI_MODE                        2U
 #endif
 
 /* 外部网络（STA）凭据。仅在 CFG_ESP_WIFI_MODE 含 STA 位时使用。

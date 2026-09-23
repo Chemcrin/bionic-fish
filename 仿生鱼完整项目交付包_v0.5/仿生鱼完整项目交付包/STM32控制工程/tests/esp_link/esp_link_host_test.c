@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "esp_link.h"
+#include "app_config.h"
 #include "bsp_uart.h"
 #include "ascii_protocol.h"
 #include "usart.h"
@@ -249,10 +250,23 @@ static void Boot(bool modern_profile)
     assert(HasCommand("AT+SYSSTORE=0") == modern_profile);
     assert(HasCommand("AT+SYSMSG=0") == modern_profile);
     assert(HasCommand("AT+CIPSTO=3") && strcmp(commands[command_count - 1U], "AT+CIPSTO=3") == 0);
-    /* Wi-Fi 模式由配置决定，STA 地址只做记录（不做等值校验），供 OLED/串口显示。 */
-    assert(HasCommand(modern_profile ? "AT+CWMODE=3" : "AT+CWMODE_CUR=3"));
-    assert(HasCommand(modern_profile ? "AT+CIPSTA?" : "AT+CIPSTA_CUR?"));
-    assert(strcmp(EspLink_StaIp(), "192.168.3.40") == 0);
+    /* Wi-Fi 模式由配置决定，STA 地址只做记录（不做等值校验），供 OLED/串口显示。
+     * 断言里必须写 CFG_ESP_WIFI_MODE 而不是写死的数字：2026-09-23 该宏由 3 改回 2
+     * （3 会让 ESP 去连不存在的 STA 旧凭据，导致 IP 直连网页完全打不开），
+     * 当时就是因为测试写死 "AT+CWMODE=3" 才在改配置后报错 —— 写死值会把
+     * 「配置变更」误报成「功能回归」，也会在下次改配置时再次失效。 */
+    {
+        char expected_mode[32];
+        (void)snprintf(expected_mode, sizeof(expected_mode),
+                       modern_profile ? "AT+CWMODE=%u" : "AT+CWMODE_CUR=%u",
+                       (unsigned)CFG_ESP_WIFI_MODE);
+        assert(HasCommand(expected_mode));
+    }
+    /* 仅 AP 模式没有 STA 地址可查（SetupCommand 返回 NULL 自动跳过该步）。 */
+    if ((CFG_ESP_WIFI_MODE & 2U) != 0U) {
+        assert(HasCommand(modern_profile ? "AT+CIPSTA?" : "AT+CIPSTA_CUR?"));
+        assert(strcmp(EspLink_StaIp(), "192.168.3.40") == 0);
+    }
     assert(observed_events == 0U);
 }
 static void Connect(unsigned id)
@@ -524,7 +538,12 @@ static void TestRawChunkedResponse(void)
     assert(chunks >= 2U);                            /* 确实被分片了 */
     assert(total == sizeof(big) - 1U);               /* 一个字节都没丢 */
     assert(payload_lengths[before] < 512U);          /* 每片都在 TX 环容量之内 */
-    assert(strcmp(EspLink_StaIp(), "192.168.3.40") == 0);
+    if ((CFG_ESP_WIFI_MODE & 2U) != 0U) {
+        assert(strcmp(EspLink_StaIp(), "192.168.3.40") == 0);
+    } else {
+        /* 纯 AP 模式下固件跳过 SET_CHECK_STA_IP，STA 地址保持空。 */
+        assert(strcmp(EspLink_StaIp(), "0.0.0.0") == 0);
+    }
     puts("PASS chunked raw (HTTP) response fits the UART TX ring");
 }
 
