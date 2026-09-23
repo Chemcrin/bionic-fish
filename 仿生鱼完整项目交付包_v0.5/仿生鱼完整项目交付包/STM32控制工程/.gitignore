@@ -15,3 +15,7 @@ build-fw-v05/
 build-fw-review/
 build-verify-v05/
 build-verify-review/
+
+# CWMODE 回归修复轮的构建目录
+build-fw-fix/
+build-host-fix/
