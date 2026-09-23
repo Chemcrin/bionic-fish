@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bionicfish.controller.control.BionicFishViewModelTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-09-23T02:20:27.949Z" hostname="HIW" time="0.3">
+  <properties/>
+  <testcase name="individual motor stops preserve the other direction and steering without global stop" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.213"/>
+  <testcase name="reverse setting can be saved and disabling it first requests global stop" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.012"/>
+  <testcase name="individual stop before background stop collector runs cannot revive other motor" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.009"/>
+  <testcase name="steering before background stop collector runs cannot revive either motor" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.007"/>
+  <testcase name="changing control mode stops even when only M2 is running" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.008"/>
+  <testcase name="reverse disable blocks controls until stop ACK and settings write both finish" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.009"/>
+  <testcase name="steering and M2 changes preserve the other motor and clamp commands to 15 degrees" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.005"/>
+  <testcase name="background stop generation and lost link clear M2 without another user gesture" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.006"/>
+  <testcase name="queued UI target is discarded when global stop changes its generation" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.005"/>
+  <testcase name="failed reverse disable releases save gate without committing false setting" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.01"/>
+  <testcase name="global stop clears both motor drafts with center and hold steering policies" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.01"/>
+  <testcase name="saved reverse off blocks both UI intents without retaining an unsent reverse draft" classname="com.bionicfish.controller.control.BionicFishViewModelTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

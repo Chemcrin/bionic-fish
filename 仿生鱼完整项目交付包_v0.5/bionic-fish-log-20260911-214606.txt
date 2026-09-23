@@ -1,0 +1,272 @@
+timestamp_epoch_ms	direction	message
+1789134165603	SYSTEM	扫描完成：1 个设备
+1789134168229	SYSTEM	扫描完成：1 个设备
+1789134170777	SYSTEM	扫描完成：0 个设备
+1789134171814	SYSTEM	扫描完成：0 个设备
+1789134174238	SYSTEM	扫描完成：0 个设备
+1789134175327	SYSTEM	扫描完成：0 个设备
+1789134177263	SYSTEM	扫描完成：1 个设备
+1789134178423	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134178424	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134178426	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134178549	SYSTEM	V1 兼容握手通过：安全停止 ACK + STA
+1789134179067	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134179067	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134179069	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134179567	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134179567	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134179568	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134180072	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134180073	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134180075	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134180570	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134180570	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134180572	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134181070	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134181070	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134181071	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134181571	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134181571	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134181571	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134182072	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134182072	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134182073	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134182573	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134182573	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134182574	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134183073	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134183073	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134183074	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134183574	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134183574	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134183575	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134184074	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134184075	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134184075	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134184575	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134184575	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134184576	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134185076	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134185076	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134185077	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134185577	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134185577	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134185578	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134186078	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134186078	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134186079	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134186579	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134186579	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134186580	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134187079	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134187079	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134187080	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134187579	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134187579	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134187580	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134188080	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134188081	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134188082	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134188581	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134188581	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134188582	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134189083	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134189083	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134189084	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134189583	TX	<CMD,seq=1,move=S,turn=C,step_speed=60,servo=0>
+1789134189583	RX	Acknowledgement(sequence=1, duplicate=false)
+1789134189584	RX	Status(sequence=1, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134189820	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134189821	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134189821	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134190084	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134190084	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134190085	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134190585	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134190586	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134190586	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134191086	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134191086	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134191087	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134191587	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134191587	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134191587	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134192087	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134192087	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134192088	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134192588	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134192589	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134192590	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134193090	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134193090	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134193092	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134193591	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134193591	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134193592	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134194091	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134194091	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134194091	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134194594	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134194594	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134194595	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134195095	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134195096	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134195096	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134195596	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134195596	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134195597	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134196097	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134196097	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134196098	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134196598	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134196598	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134196599	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134197099	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134197099	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134197100	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134197600	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134197600	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134197601	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134198101	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134198101	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134198102	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134198601	RX	Acknowledgement(sequence=2, duplicate=false)
+1789134198601	TX	<CMD,seq=2,move=S,turn=C,step_speed=60,servo=0>
+1789134198602	RX	Status(sequence=2, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134198852	TX	<CMD,seq=3,move=F,turn=C,step_speed=60,servo=0>
+1789134198852	RX	Acknowledgement(sequence=3, duplicate=false)
+1789134198853	RX	Status(sequence=3, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134199101	TX	<CMD,seq=3,move=F,turn=C,step_speed=60,servo=0>
+1789134199102	RX	Acknowledgement(sequence=3, duplicate=false)
+1789134199102	RX	Status(sequence=3, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134199302	TX	<CMD,seq=3,move=F,turn=C,step_speed=60,servo=0>
+1789134199302	RX	Acknowledgement(sequence=3, duplicate=false)
+1789134199303	RX	Status(sequence=3, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134199504	RX	Acknowledgement(sequence=3, duplicate=false)
+1789134199504	TX	<CMD,seq=3,move=F,turn=C,step_speed=60,servo=0>
+1789134199505	RX	Status(sequence=3, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134199704	TX	<CMD,seq=3,move=F,turn=C,step_speed=60,servo=0>
+1789134199704	RX	Acknowledgement(sequence=3, duplicate=false)
+1789134199705	RX	Status(sequence=3, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134199895	TX	<CMD,seq=4,move=F,turn=C,step_speed=60,servo=0>
+1789134199896	RX	Acknowledgement(sequence=4, duplicate=false)
+1789134199896	RX	Status(sequence=4, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134199912	TX	<CMD,seq=3,move=F,turn=C,step_speed=60,servo=0>
+1789134199913	RX	Acknowledgement(sequence=3, duplicate=false)
+1789134199914	RX	Status(sequence=3, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134200105	TX	<CMD,seq=4,move=F,turn=C,step_speed=60,servo=0>
+1789134200105	RX	Acknowledgement(sequence=4, duplicate=false)
+1789134200105	RX	Status(sequence=4, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134200306	TX	<CMD,seq=4,move=F,turn=C,step_speed=60,servo=0>
+1789134200306	RX	Acknowledgement(sequence=4, duplicate=false)
+1789134200307	RX	Status(sequence=4, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134200506	TX	<CMD,seq=4,move=F,turn=C,step_speed=60,servo=0>
+1789134200507	RX	Acknowledgement(sequence=4, duplicate=false)
+1789134200507	RX	Status(sequence=4, linkAlive=true, stepTargetRpm=60, stepEstimatedRpm=60, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134200614	TX	<CMD,seq=5,move=S,turn=C,step_speed=60,servo=0>
+1789134200614	RX	Acknowledgement(sequence=5, duplicate=false)
+1789134200615	RX	Status(sequence=5, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134200706	TX	<CMD,seq=5,move=S,turn=C,step_speed=60,servo=0>
+1789134200706	RX	Acknowledgement(sequence=5, duplicate=false)
+1789134200707	RX	Status(sequence=5, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134201208	TX	<CMD,seq=5,move=S,turn=C,step_speed=60,servo=0>
+1789134201208	RX	Acknowledgement(sequence=5, duplicate=false)
+1789134201209	RX	Status(sequence=5, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134201708	TX	<CMD,seq=5,move=S,turn=C,step_speed=60,servo=0>
+1789134201709	RX	Acknowledgement(sequence=5, duplicate=false)
+1789134201709	RX	Status(sequence=5, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134202209	TX	<CMD,seq=5,move=S,turn=C,step_speed=60,servo=0>
+1789134202209	RX	Acknowledgement(sequence=5, duplicate=false)
+1789134202210	RX	Status(sequence=5, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134202392	TX	<CMD,seq=6,move=S,turn=L,step_speed=60,servo=-30>
+1789134202392	RX	Acknowledgement(sequence=6, duplicate=false)
+1789134202393	RX	Status(sequence=6, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=-30, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134202710	TX	<CMD,seq=6,move=S,turn=L,step_speed=60,servo=-30>
+1789134202710	RX	Acknowledgement(sequence=6, duplicate=false)
+1789134202711	RX	Status(sequence=6, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=-30, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134202925	TX	<CMD,seq=7,move=S,turn=R,step_speed=60,servo=30>
+1789134202925	RX	Acknowledgement(sequence=7, duplicate=false)
+1789134202925	RX	Status(sequence=7, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=30, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134203210	TX	<CMD,seq=7,move=S,turn=R,step_speed=60,servo=30>
+1789134203210	RX	Acknowledgement(sequence=7, duplicate=false)
+1789134203211	RX	Status(sequence=7, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=30, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134203356	TX	<CMD,seq=8,move=S,turn=C,step_speed=60,servo=0>
+1789134203356	RX	Acknowledgement(sequence=8, duplicate=false)
+1789134203357	RX	Status(sequence=8, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134203711	TX	<CMD,seq=8,move=S,turn=C,step_speed=60,servo=0>
+1789134203711	RX	Acknowledgement(sequence=8, duplicate=false)
+1789134203712	RX	Status(sequence=8, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134204212	TX	<CMD,seq=8,move=S,turn=C,step_speed=60,servo=0>
+1789134204212	RX	Acknowledgement(sequence=8, duplicate=false)
+1789134204212	RX	Status(sequence=8, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134204712	TX	<CMD,seq=8,move=S,turn=C,step_speed=60,servo=0>
+1789134204713	RX	Acknowledgement(sequence=8, duplicate=false)
+1789134204713	RX	Status(sequence=8, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134205213	TX	<CMD,seq=8,move=S,turn=C,step_speed=60,servo=0>
+1789134205213	RX	Acknowledgement(sequence=8, duplicate=false)
+1789134205213	RX	Status(sequence=8, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134205713	TX	<CMD,seq=8,move=S,turn=C,step_speed=60,servo=0>
+1789134205713	RX	Acknowledgement(sequence=8, duplicate=false)
+1789134205714	RX	Status(sequence=8, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134206214	TX	<CMD,seq=8,move=S,turn=C,step_speed=60,servo=0>
+1789134206214	RX	Acknowledgement(sequence=8, duplicate=false)
+1789134206215	RX	Status(sequence=8, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134206537	TX	<CMD,seq=9,move=S,turn=R,step_speed=60,servo=26>
+1789134206537	RX	Acknowledgement(sequence=9, duplicate=false)
+1789134206538	RX	Status(sequence=9, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=26, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134206714	TX	<CMD,seq=9,move=S,turn=R,step_speed=60,servo=26>
+1789134206715	RX	Acknowledgement(sequence=9, duplicate=false)
+1789134206715	RX	Status(sequence=9, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=26, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134207215	TX	<CMD,seq=9,move=S,turn=R,step_speed=60,servo=26>
+1789134207215	RX	Acknowledgement(sequence=9, duplicate=false)
+1789134207216	RX	Status(sequence=9, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=26, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134207716	TX	<CMD,seq=9,move=S,turn=R,step_speed=60,servo=26>
+1789134207716	RX	Acknowledgement(sequence=9, duplicate=false)
+1789134207716	RX	Status(sequence=9, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=26, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134208216	TX	<CMD,seq=9,move=S,turn=R,step_speed=60,servo=26>
+1789134208216	RX	Acknowledgement(sequence=9, duplicate=false)
+1789134208217	RX	Status(sequence=9, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=26, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134208678	TX	<CMD,seq=10,move=S,turn=C,step_speed=60,servo=0>
+1789134208678	RX	Acknowledgement(sequence=10, duplicate=false)
+1789134208679	RX	Status(sequence=10, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134208717	TX	<CMD,seq=10,move=S,turn=C,step_speed=60,servo=0>
+1789134208717	RX	Acknowledgement(sequence=10, duplicate=false)
+1789134208718	RX	Status(sequence=10, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134209092	TX	<CMD,seq=11,move=S,turn=C,step_speed=60,servo=0>
+1789134209093	RX	Acknowledgement(sequence=11, duplicate=false)
+1789134209093	RX	Status(sequence=11, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134209217	TX	<CMD,seq=11,move=S,turn=C,step_speed=60,servo=0>
+1789134209218	RX	Acknowledgement(sequence=11, duplicate=false)
+1789134209218	RX	Status(sequence=11, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134209719	TX	<CMD,seq=11,move=S,turn=C,step_speed=60,servo=0>
+1789134209719	RX	Acknowledgement(sequence=11, duplicate=false)
+1789134209720	RX	Status(sequence=11, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134210219	TX	<CMD,seq=11,move=S,turn=C,step_speed=60,servo=0>
+1789134210219	RX	Acknowledgement(sequence=11, duplicate=false)
+1789134210219	RX	Status(sequence=11, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134210719	TX	<CMD,seq=11,move=S,turn=C,step_speed=60,servo=0>
+1789134210720	RX	Acknowledgement(sequence=11, duplicate=false)
+1789134210720	RX	Status(sequence=11, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134211220	TX	<CMD,seq=11,move=S,turn=C,step_speed=60,servo=0>
+1789134211221	RX	Acknowledgement(sequence=11, duplicate=false)
+1789134211221	RX	Status(sequence=11, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134211237	TX	<CMD,seq=12,move=S,turn=C,step_speed=60,servo=0>
+1789134211237	RX	Acknowledgement(sequence=12, duplicate=false)
+1789134211238	RX	Status(sequence=12, linkAlive=true, stepTargetRpm=0, stepEstimatedRpm=0, stepActualRpm=null, servoDegrees=0, rollDegrees=1.2, pitchDegrees=-2.4, yawDegrees=85.7, faultBits=0)
+1789134211342	SYSTEM	已断开：用户安全断开
+1789134214061	SYSTEM	扫描完成：0 个设备
+1789134214814	SYSTEM	扫描完成：0 个设备
+1789134231602	SYSTEM	扫描完成：0 个设备
+1789134232125	SYSTEM	扫描完成：0 个设备
+1789134232559	SYSTEM	扫描完成：0 个设备
+1789134232690	SYSTEM	扫描完成：0 个设备
+1789134232863	SYSTEM	扫描完成：0 个设备
+1789134232994	SYSTEM	扫描完成：0 个设备
+1789134233875	SYSTEM	扫描完成：0 个设备
+1789134234481	SYSTEM	扫描完成：0 个设备
+1789134235376	SYSTEM	扫描完成：0 个设备
+1789134236328	SYSTEM	扫描完成：0 个设备
+1789134236869	SYSTEM	扫描完成：0 个设备
+1789134237326	SYSTEM	扫描完成：0 个设备
+1789134238339	SYSTEM	扫描完成：0 个设备
+1789134239253	SYSTEM	扫描完成：0 个设备

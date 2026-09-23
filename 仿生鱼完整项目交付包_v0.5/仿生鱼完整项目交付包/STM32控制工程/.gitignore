@@ -1,0 +1,17 @@
+build-host/
+build-firmware/
+build/
+Debug/
+Release/
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.d
+
+# 本轮（v0.5）新增的独立构建/验证目录
+build-fw-v05/
+build-fw-review/
+build-verify-v05/
+build-verify-review/

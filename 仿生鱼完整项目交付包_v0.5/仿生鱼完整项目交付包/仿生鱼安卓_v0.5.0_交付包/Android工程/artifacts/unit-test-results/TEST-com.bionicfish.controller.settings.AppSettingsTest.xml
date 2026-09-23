@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bionicfish.controller.settings.AppSettingsTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-09-23T02:20:28.586Z" hostname="HIW" time="0.003">
+  <properties/>
+  <testcase name="remembered AP name does not relabel an unrelated LAN scan candidate" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.0"/>
+  <testcase name="command acknowledgement timeout precedes link watchdog" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.001"/>
+  <testcase name="AP preset comes from supplied guide and does not alter firmware timing limits" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.0"/>
+  <testcase name="real Wi-Fi endpoint stays unavailable until address and port are confirmed" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.0"/>
+  <testcase name="AP settings reject malformed addresses and ports before socket connection" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.001"/>
+  <testcase name="link timeout must exceed both command periods" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.0"/>
+  <testcase name="AP endpoint is Wi-Fi bound and independent from ordinary LAN endpoint" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.0"/>
+  <testcase name="all Bluetooth UUIDs default to unconfigured instead of invented values" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.0"/>
+  <testcase name="send periods preserve firmware watchdog margin" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.001"/>
+  <testcase name="AP SSID limit counts UTF-8 bytes instead of characters" classname="com.bionicfish.controller.settings.AppSettingsTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

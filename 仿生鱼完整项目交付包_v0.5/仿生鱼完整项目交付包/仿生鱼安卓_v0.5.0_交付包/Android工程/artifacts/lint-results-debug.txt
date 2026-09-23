@@ -1,0 +1,38 @@
+C:\Users\Lishi\Documents\Codex\2026-09-02\stm32f103c8t6-stm32f1-hal-cubemx-ssd1306-oled\outputs\bionic-fish-android-controller-v0.5.0\gradle\wrapper\gradle-wrapper.properties:3: Warning: A newer version of Gradle than 8.13 is available: 8.14.5 [AndroidGradlePluginVersion]
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "AndroidGradlePluginVersion":
+   This detector looks for usage of the Android Gradle Plugin where the
+   version you are using is not the current stable release. Using older
+   versions is fine, and there are cases where you deliberately want to stick
+   with an older version. However, you may simply not be aware that a more
+   recent version is available, and that is what this lint check helps find.
+
+C:\Users\Lishi\Documents\Codex\2026-09-02\stm32f103c8t6-stm32f1-hal-cubemx-ssd1306-oled\outputs\bionic-fish-android-controller-v0.5.0\app\build.gradle.kts:57: Warning: A newer version of androidx.core:core-ktx than 1.17.0 is available: 1.18.0 [GradleDependency]
+    implementation("androidx.core:core-ktx:1.17.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+C:\Users\Lishi\Documents\Codex\2026-09-02\stm32f103c8t6-stm32f1-hal-cubemx-ssd1306-oled\outputs\bionic-fish-android-controller-v0.5.0\app\build.gradle.kts:69: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Lishi\Documents\Codex\2026-09-02\stm32f103c8t6-stm32f1-hal-cubemx-ssd1306-oled\outputs\bionic-fish-android-controller-v0.5.0\app\build.gradle.kts:75: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NewerVersionAvailable":
+   This detector checks with a central repository to see if there are newer
+   versions available for the dependencies used by this project. This is
+   similar to the GradleDependency check, which checks for newer versions
+   available in the Android SDK tools and libraries, but this works with any
+   MavenCentral dependency, and connects to the library every time, which
+   makes it more flexible but also much slower.
+
+0 errors, 4 warnings

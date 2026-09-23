@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bionicfish.controller.settings.DataStoreSettingsStoreTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-23T02:20:28.591Z" hostname="HIW" time="0.014">
+  <properties/>
+  <testcase name="upgrade retains explicit reverse disabled preference" classname="com.bionicfish.controller.settings.DataStoreSettingsStoreTest" time="0.01"/>
+  <testcase name="invalid unrelated legacy preference cannot reenable explicit disabled reverse" classname="com.bionicfish.controller.settings.DataStoreSettingsStoreTest" time="0.001"/>
+  <testcase name="new install without stored reverse preference enables both motor reverse controls" classname="com.bionicfish.controller.settings.DataStoreSettingsStoreTest" time="0.001"/>
+  <testcase name="explicit user changes to reverse preference survive stored roundtrip" classname="com.bionicfish.controller.settings.DataStoreSettingsStoreTest" time="0.001"/>
+  <testcase name="upgrade retains explicit reverse enabled preference" classname="com.bionicfish.controller.settings.DataStoreSettingsStoreTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

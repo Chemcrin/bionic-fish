@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bionicfish.controller.transport.MockTransportTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-23T02:20:28.609Z" hostname="HIW" time="0.016">
+  <properties/>
+  <testcase name="mock rejects range duplicate and servo semantic errors using production boundaries" classname="com.bionicfish.controller.transport.MockTransportTest" time="0.006"/>
+  <testcase name="legacy five-field command resets M2 to stop and unknown extensions are ignored" classname="com.bionicfish.controller.transport.MockTransportTest" time="0.002"/>
+  <testcase name="mock discovery and responses use production protocol" classname="com.bionicfish.controller.transport.MockTransportTest" time="0.005"/>
+  <testcase name="mock accepts all dual motor directions and step_on describes only M1" classname="com.bionicfish.controller.transport.MockTransportTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" tests="36" skipped="0" failures="0" errors="0" timestamp="2026-09-23T02:20:28.255Z" hostname="HIW" time="0.317">
+  <properties/>
+  <testcase name="handshake keepalive also runs while the original ACK is pending" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.075"/>
+  <testcase name="failed safety write cannot deadlock handshake on a new session" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.011"/>
+  <testcase name="cancellation during ACK or STA wait stops keepalive before the next session" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.018"/>
+  <testcase name="M2 alone uses active control cadence rather than stopped heartbeat cadence" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.008"/>
+  <testcase name="handshake still requires status in addition to acknowledgement" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <testcase name="unknown frame does not refresh supported protocol watchdog" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.009"/>
+  <testcase name="late individual stop ACK cannot publish over newer global stop" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.008"/>
+  <testcase name="reverse stays blocked until explicitly confirmed in settings" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.011"/>
+  <testcase name="quick NA status handshake accepts faults without redundant keepalive" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="AP TCP failure before connection does not falsely report a handshake failure" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.008"/>
+  <testcase name="mock scan handshake control telemetry and safe stop share one protocol path" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.008"/>
+  <testcase name="slow STA stays linked by identical sequence handshake keepalive" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <testcase name="AP direct connects without scanning and saves route without replacing LAN settings" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="queued keepalives are discarded after the probe completes" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.004"/>
+  <testcase name="AP reconnect keeps Wi-Fi-only endpoint and re-handshakes at safe stop" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.007"/>
+  <testcase name="later global stop cuts off queued individual stop that retains a moving motor" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.009"/>
+  <testcase name="rejected individual stop neither republishes target nor repeats old moving target" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="AP direct uses edited preset and never silently connects a remembered device" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.002"/>
+  <testcase name="connection loss drops queued and periodic movement before transport write" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.007"/>
+  <testcase name="control requested during disconnect cannot run after safety stop" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <testcase name="AP TCP connection with only ACK is not declared ready or remembered" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.003"/>
+  <testcase name="keepalive cannot replace same sequence linked status verification" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="safety stop bypasses queued controls and cuts off every older request" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.007"/>
+  <testcase name="explicit command accepts duplicate acknowledgement" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.003"/>
+  <testcase name="individual stop keeps range and handshake requirements" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.004"/>
+  <testcase name="individual stop overtakes queued targets and discards stale movement keepalive" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.01"/>
+  <testcase name="individual stops preserve other motor and servo without global stop generation" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <testcase name="queued individual stop cannot retain a running motor after connection loss" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.007"/>
+  <testcase name="write failure ACK timeout and ERR all terminate handshake keepalive" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.008"/>
+  <testcase name="explicit command ACK timeout reports loss and starts safety policy" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="scan is rejected while a session is active" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.003"/>
+  <testcase name="manual connect cancels stale reconnect intent without tearing down new session" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <testcase name="connecting another device urgently stops old fish before teardown" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.006"/>
+  <testcase name="same sequence error fails explicit command" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="both motor directions are enabled by default and full targets remain independent" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.005"/>
+  <testcase name="disabled reverse setting applies to both motors and priority stop path" classname="com.bionicfish.controller.device.DefaultBionicFishRepositoryTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

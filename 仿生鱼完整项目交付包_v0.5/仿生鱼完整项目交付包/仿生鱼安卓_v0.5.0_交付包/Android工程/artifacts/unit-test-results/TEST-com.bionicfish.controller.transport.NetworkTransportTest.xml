@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bionicfish.controller.transport.NetworkTransportTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-23T02:20:28.627Z" hostname="HIW" time="0.031">
+  <properties/>
+  <testcase name="udp transport exchanges datagrams on loopback" classname="com.bionicfish.controller.transport.NetworkTransportTest" time="0.015"/>
+  <testcase name="tcp transport exchanges bytes on loopback" classname="com.bionicfish.controller.transport.NetworkTransportTest" time="0.015"/>
+  <testcase name="blank discovery protocol never invents a probe" classname="com.bionicfish.controller.transport.NetworkTransportTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
