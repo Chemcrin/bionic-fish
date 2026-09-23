@@ -19,3 +19,9 @@ build-verify-review/
 # CWMODE 回归修复轮的构建目录
 build-fw-fix/
 build-host-fix/
+
+# HTTP 响应缓冲修复轮的构建目录
+build-fw-http/
+build-host-http/
+build-host-v2/
+build-guard-test/

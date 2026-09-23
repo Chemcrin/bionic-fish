@@ -4,6 +4,9 @@
 #include "app_config.h"
 #include "bsp_time.h"
 #include "bsp_uart.h"
+/* 只为了取 HTTP_RESPONSE_BYTES 做编译期尺寸门禁（HTTP_RAW_BYTES >= 它）。
+ * esp_link 不依赖 http_ui 的任何函数，只是共享这一个尺寸常量。 */
+#include "http_ui.h"
 
 #define FRAME_BYTES       200U
 #define EVENT_SLOTS       4U
@@ -19,8 +22,18 @@
 #define RESET_TIMEOUT_MS  5000UL
 #define BOOT_DELAY_MS     1200UL
 /* HTTP 响应缓冲：整个响应留在 RAM 里，按 RAW_CHUNK_BYTES 分多次 CIPSEND 发出。
- * 必须 >= protocol/Inc/http_ui.h 的 HTTP_RESPONSE_BYTES。 */
-#define HTTP_RAW_BYTES    3584U
+ *
+ * ⚠️ 必须 >= protocol/Inc/http_ui.h 的 HTTP_RESPONSE_BYTES。
+ * 2026-09-23 修复：本宏曾是 3584，而 HTTP_RESPONSE_BYTES 是 4096，且网页在 v0.5
+ * 重做后涨到 3652 字节页面（响应总长 3779）。EspLink_SendRaw 里的
+ * `length > sizeof(L.raw)` 判定因此成立并**静默 return false** ——
+ * 一个字节都发不出去，浏览器只能一直超时，而串口上 error 仍是 "OK"、毫无提示。
+ * 这类"缓冲区尺寸对不上"必须由编译期拦住，见下方 kHttpRawMustFitResponse。 */
+#define HTTP_RAW_BYTES    4096U
+/* 编译期门禁：L.raw 装不下完整 HTTP 响应就构建失败。
+ * 与上面 HTTP_RESPONSE_BYTES 联动，避免再次出现"改了页面/改了响应缓冲、
+ * 却忘了同步传输缓冲"的静默失败。 */
+typedef char kHttpRawMustFitResponse[(HTTP_RAW_BYTES >= HTTP_RESPONSE_BYTES) ? 1 : -1];
 /* 单次 CIPSEND 的载荷上限。**必须明显小于 CFG_UART_TX_RING_BYTES(512)**：
  * QueueRaw 要求 `TxFree() >= length`，一次性投递超过环形缓冲长度的载荷会永远入队失败，
  * 卡在 AT_BODY 直到 700ms 超时，进而锁存 ResetNeeded（实机已踩过这个坑）。 */

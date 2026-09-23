@@ -83,15 +83,45 @@ ST-LINK 使用 PA13/PA14 和 GND。烧录脚本与手动步骤见 [scripts/READM
 
 详见 [验收检查清单.md](验收检查清单.md)。本轮 host 侧通过 **16/16** 测试（含编译期门禁），Arm 交叉构建已重做并成功。
 
-**下列 BIN 尺寸与 SHA-256 属于「2 s 慢周期 + 95%/60% 双挡位 + 舵机 ±15° + CWMODE 回归修复」版本的 Arm 交叉构建产物**（`build-fw-fix/`）：
+**下列 BIN 尺寸与 SHA-256 属于「2 s 慢周期 + 95%/60% 双挡位 + 舵机 ±15° + CWMODE 回归修复 + HTTP 缓冲修复」版本的 Arm 交叉构建产物**（`build-fw-http/`）：
 
 | 产物 | 字节数 | SHA-256 |
 | --- | ---: | --- |
-| `bionic_fish.bin` | 34,272 | `333e4a524783f0806917d3da522d301612e6bafc5cdbd0162930877cb7768912` |
+| `bionic_fish.bin` | 34,272 | `2559592197244234f67009fd26682a8785665dbe6f5fa6f692f3113653029e4a` |
 
-占用：Flash **52.29%**（34,272 / 65,536 B）、RAM **77.42%**。详细记录见 `build-fw-fix/build-info.json` 与 `build-firmware/`，链接告警及本机工具来源边界见构建说明。业务代码使用固定缓冲，无显式动态分配；不对 newlib 内部路径作未经实测的零堆承诺。
+占用：Flash **52.29%**（34,272 / 65,536 B）、RAM **79.92%**（16,368 / 20,480 B）。详细记录见 `build-fw-http/build-info.json`，链接告警及本机工具来源边界见构建说明。业务代码使用固定缓冲，无显式动态分配；不对 newlib 内部路径作未经实测的零堆承诺。
 
-> 上一版（`build-fw-v05/`，哈希 `517de91e…`）存在 **CWMODE 回归**，已被本版取代，见下方「Wi-Fi 模式回归修复」。
+> 更早的两版（`build-fw-v05/` `517de91e…`、`build-fw-fix/` `333e4a52…`）分别存在 **CWMODE 回归**与 **HTTP 缓冲不足**，均已被本版取代。
+
+### HTTP 响应缓冲不足修复（2026-09-23，网页打不开的直接原因）
+
+**症状**：CWMODE 修好之后，手机连上 AP、`server=1` 表示 9000 端口在监听，但 **HTTP 页面依然打不开**。
+
+**根因**：两个缓冲区尺寸对不上。
+
+| 缓冲区 | 位置 | 大小 |
+| --- | --- | ---: |
+| `response[]`（HTTP_RESPONSE_BYTES） | `app/Src/app.c:507` | 4096 |
+| `L.raw[]`（HTTP_RAW_BYTES） | `bsp/Src/esp_link.c` | **3584** ← 少了 512 |
+
+v0.5 重做网页后，`kPage` 涨到 **3652** 字节（从 ELF 符号表 `0x0e44` 读出），加上 123 字节响应头与 4 位 Content-Length，**实际响应总长 3779 字节** > `L.raw` 的 3584。
+
+于是 `EspLink_SendRaw` 的守卫 `length > sizeof(L.raw)` 成立，**直接 `return false`** —— 响应一个字节都发不出去，浏览器只能一直超时。**整个失败过程是静默的**：串口上 `error` 仍是 `OK`、`reset=0`、`uloss` 不涨，`tcp` 也会因为客户端超时退出而回到 0，没有任何一处提示"缓冲区装不下"。
+
+**修复**：
+1. `HTTP_RAW_BYTES` **3584 → 4096**，与 `HTTP_RESPONSE_BYTES` 对齐；
+2. 在 `esp_link.c` 加编译期门禁 `kHttpRawMustFitResponse`，并在该文件 include `http_ui.h` 取常量。**今后只要有人再让传输缓冲小于响应缓冲，构建直接失败**（实测把 `HTTP_RAW_BYTES` 改成 2048 会报 `size of array 'kHttpRawMustFitResponse' is negative`），不会再退化成运行期静默丢包。
+
+**验证**：`L` 结构在 .bss 中由 `0x14d4`(5332) 增到 `0x16d4`(5844)，正好 +512 字节；Arm 构建成功；host 测试 **10/10** 通过；烧录后独立回读 34,272 字节 SHA-256 一致。
+
+### 已知待改进：App 端连上就断（未修复）
+
+安卓端连接成功后会出现「断连—自动重连」反复循环。代码层已定位到两个成因，**本轮未改动**：
+
+1. **`AT+CIPSTO=3`**（`bsp/Src/esp_link.c:494`）：ESP 服务端 **3 秒收不到任何数据就主动断开客户端**。而 App 在 `desired == null` 时只 `delay` 不发帧（`DefaultBionicFishRepository.kt:674-676`），切后台/进设置页/安全停车后一旦出现 3 秒空窗就被单方面断开。注意该值在旧版同样是 3，**非本次回归**，是一直埋着的隐患。
+2. **固件只接受一个控制客户端**（`bsp/Src/esp_link.c:250`，`L.client < 0` 才接受）：安卓与网页同时连、或重连时旧连接尚未被 ESP 回收，新连接会被立刻 `AT+CIPCLOSE`。
+
+建议方向：放宽 `CIPSTO`（如 30 s），或让 App 在无命令时也发心跳。
 
 ### Wi-Fi 模式回归修复（2026-09-23）
 
