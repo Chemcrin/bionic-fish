@@ -646,7 +646,7 @@ static void ServiceOled(uint32_t now_ms)
     }
 }
 
-/* 启动扫描每轮只探测一个地址，且只在步进停止、OLED无在途刷新时执行。 */
+/* 启动扫描每轮只探测一个地址，且只在 M1 停止、OLED无在途刷新时执行。 */
 static void ServiceI2cScan(void)
 {
     char line[24];

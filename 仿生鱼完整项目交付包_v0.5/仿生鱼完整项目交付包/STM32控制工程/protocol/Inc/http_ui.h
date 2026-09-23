@@ -46,7 +46,7 @@ typedef struct {
     bool pending_cr;     /* 上一个字节是 CR */
     bool header_line_empty; /* 当前行开头就遇到 CRLF ⇒ 空行 */
     int servo_deg;       /* HTTP_ACTION_SERVO 时的目标角度；/cmd 的 servo= 也会填这里 */
-    uint16_t step_speed; /* /cmd 的 speed=；兼容字段，已不改变占空比 */
+    uint16_t step_speed; /* /cmd 的 speed=：占空比挡位选择器，60=低速挡 / 100=满速挡 */
     /* /cmd 的 m2=（M2 方向）：+1 前进 / 0 停止 / -1 后退；m2_present=false 等同停止。 */
     bool m2_present;
     int m2_dir;

@@ -416,7 +416,7 @@ size_t HttpUi_BuildResponse(HttpRequest *request, const BfSystemSnapshot *snapsh
         if (QueryInt(query, "servo=", &value)) {
             request->servo_deg = ClampServo(value);
         }
-        /* speed= 兼容字段：只认 60/100，已不改变占空比。 */
+        /* speed= 是占空比挡位选择器：60 = 低速挡、100 = 满速挡，只认这两个值。 */
         if (QueryInt(query, "speed=", &value) && ((value == 60) || (value == 100))) {
             request->step_speed = (uint16_t)value;
         }
