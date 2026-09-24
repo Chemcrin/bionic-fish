@@ -4,6 +4,11 @@
 
 单位 **mm**。SolidWorks 原生件为 `SLDPRT` / `SLDASM`，通用交换格式为 `step`。
 
+<p align="center">
+  <img src="../docs/images/tail-prototype.jpg" width="52%" alt="尾段支撑件与传动件打印实拍">
+</p>
+<p align="center"><em>打印完成的尾段支撑件与传动件实拍 —— 支撑件已带加强筋，与曲柄摇杆、尾鳍座配合</em></p>
+
 ## 零件清单
 
 | 文件 | 作用 | 状态 |
