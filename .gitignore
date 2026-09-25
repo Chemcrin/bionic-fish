@@ -29,6 +29,8 @@ service-account.json
 password*
 token.*
 *token*
+# 例外：*token* 会误伤源码文件名（如 DesignTokens.kt），此处显式放行
+!DesignTokens.kt
 
 # ===== IDE & 编辑器 =====
 .vscode/
