@@ -34,7 +34,7 @@ $ErrorActionPreference = 'Stop'
 
 if (-not $ProjectRoot) {
   # 默认取仓库内 v0.5 交付包的固件工程（脚本置于仓库根目录即可直接运行，无需改路径）
-  $ProjectRoot = Join-Path $PSScriptRoot '仿生鱼完整项目交付包_v0.5\仿生鱼完整项目交付包\STM32控制工程'
+  $ProjectRoot = Join-Path $PSScriptRoot '仿生鱼完整项目交付包_v1\仿生鱼完整项目交付包\STM32控制工程'
 }
 
 function Assert-Path([string]$Path, [string]$What) {
